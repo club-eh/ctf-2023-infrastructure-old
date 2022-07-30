@@ -1,0 +1,6 @@
+# ignore local vagrant files
+/.vagrant
+/.package-cache
+
+# ignore local inventories
+/inventories/local*
