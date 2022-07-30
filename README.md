@@ -13,4 +13,4 @@ Broadly speaking, there are three distinct deployment environments:
 | Staging | Terraform | The environment that will be used for testing in the months leading up to the CTF. |
 | Local | Vagrant | Anyone can spin up their own local environment for testing or debugging. |
 
-In all three environments, Ansible is used to manage the machines on the OS-level and below.
+In all three environments, Ansible is used to manage the machines at the OS-level.
