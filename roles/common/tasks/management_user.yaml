@@ -1,0 +1,25 @@
+- name: Create and configure management user
+  become: true
+  block:
+
+  - name: Create management user
+    ansible.builtin.user:
+      state: present
+      name: management
+      comment: "Superuser account used for administration and automation"
+      groups: ["wheel"]
+      append: yes
+
+  - name: Install shared SSH pubkey
+    ansible.posix.authorized_key:
+      state: present
+      user: management
+      key: "{{ lookup('file', 'secrets/ssh_key.pub') }}"
+
+  - name: Configure password-less sudo for management user
+    community.general.sudoers:
+      state: present
+      name: management_user
+      group: management
+      commands: ALL
+      nopassword: yes

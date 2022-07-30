@@ -1,0 +1,14 @@
+- name: Update system with dnf
+  become: true
+  block:
+
+  - name: Update all packages
+    throttle: 1
+    ansible.builtin.dnf:
+      name: "*"
+      state: latest
+
+  - name: Cleanup unneeded packages
+    throttle: 1
+    ansible.builtin.dnf:
+      autoremove: yes

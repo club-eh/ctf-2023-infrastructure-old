@@ -1,0 +1,3 @@
+# Group variables for the flagship machine
+
+machine_hostname: "ctf-flagship"

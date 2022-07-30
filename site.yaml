@@ -1,0 +1,4 @@
+# Playbook for all machines
+
+- ansible.builtin.import_playbook: flagship-machine.yaml
+- ansible.builtin.import_playbook: challenge-machines.yaml

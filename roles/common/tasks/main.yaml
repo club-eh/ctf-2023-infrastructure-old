@@ -1,0 +1,14 @@
+# Configure management user (before anything else)
+- import_tasks: management_user.yaml
+
+# Update system packages, etc.
+- import_tasks: update_system.yaml
+
+# General system hardening
+- import_tasks: system_hardening.yaml
+
+
+- name: Set hostname
+  become: true
+  ansible.builtin.hostname:
+    name: "{{ machine_hostname }}"  # group variable

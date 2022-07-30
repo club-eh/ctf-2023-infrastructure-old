@@ -1,0 +1,6 @@
+- name: Disable unprivileged dmesg access
+  become: true
+  ansible.posix.sysctl:
+    state: present
+    name: kernel.dmesg_restrict
+    value: 1

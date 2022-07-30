@@ -1,0 +1,3 @@
+# Group variables for challenge machines
+
+machine_hostname: "ctf-challenges"
