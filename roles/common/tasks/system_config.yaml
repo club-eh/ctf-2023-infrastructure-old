@@ -1,0 +1,9 @@
+- name: Set hostname
+  become: true
+  ansible.builtin.hostname:
+    name: "{{ machine_hostname }}"  # group variable
+
+- name: Set timezone to America/Edmonton
+  become: true
+  community.general.timezone:
+    name: "{{ machine_timezone }}"  # group variable

@@ -2,10 +2,10 @@
   become: true
   block:
 
-  - name: Update all packages
+  - name: Upgrade all packages
     ansible.builtin.dnf:
-      name: "*"
       state: latest
+      name: "*"
 
   - name: Cleanup unneeded packages
     ansible.builtin.dnf:
