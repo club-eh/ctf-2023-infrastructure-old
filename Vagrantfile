@@ -60,5 +60,13 @@ Vagrant.configure("2") do |config|
       # prevent conflicts over shared package cache
       dnf_throttle: 1
     }
+
+    # workaround for https://github.com/hashicorp/vagrant/issues/12762
+    ansible.host_vars = {
+      "ctf-flagship" => { vagrant_workaround_static_ip: "192.168.61.10/24" },
+    }
+    (1..challenge_machine_num).each do |mid|
+      ansible.host_vars["ctf-challenges-#{mid}"] = { vagrant_workaround_static_ip: "192.168.61.#{10 + mid}/24" }
+    end
   end
 end

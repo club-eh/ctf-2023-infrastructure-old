@@ -6,3 +6,25 @@
 
 # Base system hardening
 - import_tasks: system_hardening.yaml
+
+
+# Local-only workaround for https://github.com/hashicorp/vagrant/issues/12762
+- name: Fix Vagrant network configuration
+  become: true
+  when: vagrant_workaround_static_ip is defined
+  block:
+
+  - name: Add static IP config for host-only network
+    community.general.nmcli:
+      conn_name: vagrant-private
+      ifname: eth1
+      type: ethernet
+      ip4: "{{ vagrant_workaround_static_ip }}"
+      state: present
+      autoconnect: true
+    register: vagrant_workaround_static_ip_config
+
+  - name: Enable new network config
+    when: vagrant_workaround_static_ip_config.changed
+    ansible.builtin.command:
+      cmd: "nmcli connection up vagrant-private"
