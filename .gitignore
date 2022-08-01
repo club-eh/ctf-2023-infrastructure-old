@@ -4,3 +4,6 @@
 
 # ignore local inventories
 /inventories/local*
+
+# ignore local secrets
+/secrets/local*
