@@ -3,7 +3,7 @@
   become: true
   no_log: true  # avoid logging private keys
   ansible.builtin.shell:
-    cmd: "umask 177 && wg genkey > /root/intnet-privatekey"
+    cmd: "umask 177 && wg genkey | tee /root/intnet-privatekey"
     creates: /root/intnet-privatekey
   register: intnet_privkey_generated
 
