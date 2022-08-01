@@ -1,3 +1,5 @@
 # Group variables for the flagship machine
 
 machine_hostname: "ctf-flagship"
+
+intnet_address: "192.168.50.1"

@@ -1,0 +1,54 @@
+# Generate key file if it doesn't exist
+- name: Generate new private key
+  become: true
+  no_log: true  # avoid logging private keys
+  ansible.builtin.shell:
+    cmd: "umask 177 && wg genkey > /root/intnet-privatekey"
+    creates: /root/intnet-privatekey
+  register: intnet_privkey_generated
+
+# Ensure correct permissions
+- name: Verify private key permissions
+  become: true
+  ansible.builtin.file:
+    state: file
+    path: /root/intnet-privatekey
+    owner: root
+    group: root
+    mode: "0600"
+    follow: false
+  # fail if the file permissions are incorrect
+  check_mode: true
+  register: intnet_privkey_permissions
+  failed_when: intnet_privkey_permissions.changed
+
+# Read key file if it already exists
+- name: Read private key file
+  become: true
+  no_log: true  # avoid logging private keys
+  when: not intnet_privkey_generated.changed
+  ansible.builtin.slurp:
+    src: /root/intnet-privatekey
+  register: intnet_privkey_read
+
+# Store private key as fact
+- name: Set private key fact
+  no_log: true  # avoid logging private keys
+  ansible.builtin.set_fact:
+    intnet_privkey:
+      "{{ ( intnet_privkey_generated.stdout if intnet_privkey_generated.changed else intnet_privkey_read.content | b64decode ) | trim }}"
+
+
+# Derive public key from the private key (derivation is deterministic)
+- name: Derive public key
+  no_log: true  # avoid logging private keys (stdin)
+  ansible.builtin.command:
+    cmd: "wg pubkey"
+    stdin: "{{ intnet_privkey }}"
+  changed_when: false  # prevent this task from always changing
+  register: intnet_pubkey
+
+# Store public key as fact (to allow for cross-host references)
+- name: Set public key fact
+  ansible.builtin.set_fact:
+    intnet_pubkey: "{{ intnet_pubkey.stdout | trim }}"

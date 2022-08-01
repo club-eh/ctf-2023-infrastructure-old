@@ -1,0 +1,25 @@
+# Auto-generated via Ansible for node {{ ansible_nodename }}
+# Unofficial config documentation: https://github.com/pirate/wireguard-docs#config-reference
+
+{%- set wg_port = 51820 %}
+
+
+[Interface]
+# Name = {{ inventory_hostname }}
+{# Append subnet prefix to host address; `intnet_address` and `intnet_network` are both defined as group variables #}
+Address = {{ intnet_address }}/{{ intnet_network | ansible.utils.ipaddr('prefix') }}
+ListenPort = {{ wg_port }}
+PrivateKey = {{ intnet_privkey }}
+
+
+{# Iterate over all hosts, skipping ourselves and hosts that do not match our network #}
+{% for name, host in hostvars.items() if name != inventory_hostname and host.intnet_network is defined and host.intnet_network == intnet_network -%}
+
+[Peer]
+# Name = {{ name }}
+{# use `intnet_carrier_addr`, fallback to `ansible_host` #}
+Endpoint = {{ host.intnet_carrier_addr if host.intnet_carrier_addr is defined else host.ansible_host }}:{{ wg_port }}
+PublicKey = {{ host.intnet_pubkey }}
+AllowedIPs = {{ host.intnet_address }}/32
+
+{% endfor %}

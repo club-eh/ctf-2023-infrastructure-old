@@ -1,0 +1,15 @@
+# Configures a Wireguard mesh network for inter-machine communication.
+# Loosely based on https://github.com/githubixx/ansible-role-wireguard
+# Note: this role requires all (relevant) hosts to be present - caching is not used.
+
+# Install wireguard, etc.
+- import_tasks: prepare_system.yaml
+
+# Generate and/or read existing keypair
+- import_tasks: generate_keypair.yaml
+
+# Generate wireguard config file
+- import_tasks: generate_config.yaml
+
+# Activate the new config
+- import_tasks: activate_config.yaml

@@ -1,4 +1,28 @@
-# Playbook for all machines
+# Playbook for fully provisioning all machines
 
-- ansible.builtin.import_playbook: flagship-machine.yaml
-- ansible.builtin.import_playbook: challenge-machines.yaml
+# Base provisioning for all machines
+- hosts: all
+  roles:
+    - base
+
+# Internal network
+- hosts: all
+  any_errors_fatal: true  # mesh config will fail if any hosts are not available
+  roles:
+    - intnet
+  tags:
+    - intnet
+
+# General tasks for all machines
+- hosts: all
+  roles:
+    - common
+
+
+- hosts: flagship
+  roles:
+    - flagship
+
+- hosts: challenges
+  roles:
+    - challenges

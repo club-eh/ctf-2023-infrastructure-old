@@ -1,5 +1,6 @@
 - name: Update system with dnf
   become: true
+  throttle: "{{ dnf_throttle | default(0) }}"  # allow throttling via inventory or extra variable
   block:
 
   - name: Upgrade all packages

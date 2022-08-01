@@ -1,0 +1,22 @@
+# Create Wireguard config directory (if needed)
+- name: Create Wireguard config directory
+  become: true
+  ansible.builtin.file:
+    state: directory
+    path: /etc/wireguard
+    owner: root
+    group: root
+    mode: "0700"
+
+# Generate up-to-date Wireguard config
+# Note: hosts need to be synced at this point (the template needs access to all pubkeys)
+- name: Generate Wireguard config
+  become: true
+  no_log: true  # avoid logging private keys
+  ansible.builtin.template:
+    src: wg-intnet.conf.j2
+    dest: /etc/wireguard/intnet.conf
+    owner: root
+    group: root
+    mode: "0600"
+  register: intnet_wg_config

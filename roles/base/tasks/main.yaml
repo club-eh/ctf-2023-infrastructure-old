@@ -1,0 +1,8 @@
+# Configure management user (before anything else)
+- import_tasks: management_user.yaml
+
+# Base system configuration (hostnames, etc.)
+- import_tasks: system_config.yaml
+
+# Base system hardening
+- import_tasks: system_hardening.yaml

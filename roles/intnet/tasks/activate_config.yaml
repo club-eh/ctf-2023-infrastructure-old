@@ -1,0 +1,12 @@
+- name: Activate internal network config
+  become: true
+  ansible.builtin.systemd:
+    name: "wg-quick@intnet.service"
+    # reload service if config changed, otherwise just ensure it's started
+    state: "{{ 'reloaded' if intnet_wg_config.changed else 'started' }}"
+
+- name: Enable internal network on boot
+  become: true
+  ansible.builtin.systemd:
+    name: "wg-quick@intnet.service"
+    enabled: true

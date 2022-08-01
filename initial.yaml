@@ -1,0 +1,6 @@
+# Playbook for initial provisioning
+
+# Base provisioning for all machines (does not depend on host availability)
+- hosts: all
+  roles:
+    - base

@@ -4,16 +4,18 @@
     path: /etc/yum.repos.d/netdata-edge.repo
   register: netdata_repo
 
-- name: Install netdata repo
-  become: true
-  when: "not netdata_repo.stat.exists"
-  ansible.builtin.dnf:
-    state: present
-    name: "https://packagecloud.io/netdata/netdata/packages/fedora/36/netdata-repo-edge-1-2.noarch.rpm/download.rpm"
-    disable_gpg_check: true
+- become: true
+  throttle: "{{ dnf_throttle | default(0) }}"  # allow throttling via inventory or extra variable
+  block:
 
-- name: Install or update netdata
-  become: true
-  ansible.builtin.dnf:
-    state: latest
-    name: netdata
+  - name: Install netdata repo
+    when: "not netdata_repo.stat.exists"
+    ansible.builtin.dnf:
+      state: present
+      name: "https://packagecloud.io/netdata/netdata/packages/fedora/36/netdata-repo-edge-1-2.noarch.rpm/download.rpm"
+      disable_gpg_check: true
+
+  - name: Install or update netdata
+    ansible.builtin.dnf:
+      state: latest
+      name: netdata

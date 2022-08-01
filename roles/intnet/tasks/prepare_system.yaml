@@ -1,0 +1,22 @@
+# Installs prerequisite packages, etc.
+
+- name: Install wireguard tools
+  become: true
+  throttle: "{{ dnf_throttle | default(0) }}"  # allow throttling via inventory or extra variable
+  ansible.builtin.dnf:
+    state: present
+    name: wireguard-tools
+
+- name: Load wireguard kernel module
+  become: true
+  community.general.modprobe:
+    state: present
+    name: wireguard
+
+- name: Enable wireguard kernel module at boot
+  become: true
+  ansible.builtin.copy:
+    content: |
+      # Load wireguard module for internal network
+      wireguard
+    dest: /etc/modules-load.d/wireguard.conf
