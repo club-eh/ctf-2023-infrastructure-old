@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
 
 
   # Define flagship machine
-  config.vm.define "flagship-machine" do |machine|
+  config.vm.define "ctf-flagship" do |machine|
     machine.vm.network :private_network, ip: "192.168.61.10/24"
   end
 
@@ -37,7 +37,7 @@ Vagrant.configure("2") do |config|
   challenge_machines = []
   (1..challenge_machine_num).each do |mid|
     # generate machine name
-    machine_name = "challenge-machine-#{mid}"
+    machine_name = "ctf-challenges-#{mid}"
     # add to array
     challenge_machines << machine_name
     # define the machine
@@ -52,7 +52,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :ansible do |ansible|
     ansible.playbook = "initial.yaml"
     ansible.groups = {
-      "flagship" => ["flagship-machine"],
+      "flagship" => ["ctf-flagship"],
       "challenges" => challenge_machines
     }
     ansible.extra_vars = {

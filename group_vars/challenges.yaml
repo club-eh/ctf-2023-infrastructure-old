@@ -1,6 +1,6 @@
 # Group variables for challenge machines
 
-machine_hostname: "ctf-challenges"
+machine_hostname: "ctf-challenges-{{ groups.challenges.index(inventory_hostname) + 1 }}"
 
 # generates a valid address within the proper subnet (based on position of host within group)
 intnet_address: "{{ '192.168.50.16/28' | ansible.utils.nthhost( groups.challenges.index(inventory_hostname) + 1 ) }}"
