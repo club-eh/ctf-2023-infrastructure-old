@@ -1,8 +1,10 @@
 # Common variables for all machines
 
+# SSH credentials
 ansible_user: management
-ansible_ssh_private_key_file: secrets/ssh_key
+ansible_ssh_private_key_file: "secrets/{{ target_env }}/management_ssh_key"
 
+# Timezone to set across all machines
 machine_timezone: America/Edmonton
 
 # Subnet to use for the entire internal network.

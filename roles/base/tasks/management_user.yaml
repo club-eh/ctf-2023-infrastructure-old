@@ -14,7 +14,7 @@
     ansible.posix.authorized_key:
       state: present
       user: management
-      key: "{{ lookup('file', 'secrets/ssh_key.pub') }}"
+      key: "{{ lookup('file', 'secrets/' ~ target_env ~ '/management_ssh_key.pub') }}"
 
   - name: Configure password-less sudo for management user
     community.general.sudoers:

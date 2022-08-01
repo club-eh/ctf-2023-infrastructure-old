@@ -56,6 +56,7 @@ Vagrant.configure("2") do |config|
       "challenges" => challenge_machines
     }
     ansible.extra_vars = {
+      target_env: "local",
       # prevent conflicts over shared package cache
       dnf_throttle: 1
     }
