@@ -1,9 +1,11 @@
+# Installs some useful / QoL packages
 - name: Install extra packages
   become: true
   throttle: "{{ dnf_throttle | default(0) }}"  # allow throttling via inventory or extra variable
   ansible.builtin.dnf:
     state: present
     name: [
+      bash-completion,  # enables shell completion
       git,
       nano,  # simple text editor
       micro,  # enhanced nano

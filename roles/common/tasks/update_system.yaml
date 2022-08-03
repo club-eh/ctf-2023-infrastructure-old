@@ -10,4 +10,4 @@
 
   - name: Cleanup unneeded packages
     ansible.builtin.dnf:
-      autoremove: yes
+      autoremove: true

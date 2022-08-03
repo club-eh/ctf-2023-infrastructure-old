@@ -8,7 +8,7 @@
       name: management
       comment: "Superuser account used for administration and automation"
       groups: ["wheel"]
-      append: yes
+      append: true
 
   - name: Install shared SSH pubkey
     ansible.posix.authorized_key:
@@ -22,4 +22,4 @@
       name: management_user
       group: management
       commands: ALL
-      nopassword: yes
+      nopassword: true
