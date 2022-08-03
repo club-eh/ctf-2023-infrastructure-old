@@ -1,0 +1,15 @@
+{% if netdata_parent %}
+# shared API key
+[{{ netdata_streaming_key }}]
+	enabled = yes
+{% else %}
+[stream]
+	# enable streaming on child nodes
+	enabled = yes
+	# use shared API key
+	api key = {{ netdata_streaming_key }}
+	# stream to flagship (securely)
+	destination = 192.168.50.1:19999:SSL  {# hardcoded IP address because it's simpler +#}
+	# ignore self-signed certificate
+	ssl skip certificate verification = yes
+{% endif %}

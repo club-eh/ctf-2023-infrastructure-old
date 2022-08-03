@@ -18,11 +18,9 @@
   roles:
     - common
 
-
-- hosts: flagship
+# Setup Netdata for all machines
+- hosts: all
   roles:
-    - flagship
-
-- hosts: challenges
-  roles:
-    - challenges
+    - netdata
+  tags:
+    - netdata

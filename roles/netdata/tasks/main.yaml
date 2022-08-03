@@ -1,0 +1,7 @@
+# Installs and configures Netdata with a parent-child streaming setup
+
+# Install Netdata (latest nightly)
+- import_tasks: install_netdata.yaml
+
+# Configure Netdata
+- import_tasks: configure_netdata.yaml

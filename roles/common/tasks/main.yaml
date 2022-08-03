@@ -5,8 +5,3 @@
 
 # Install general packages for all machines
 - import_tasks: general_packages.yaml
-
-# Install netdata
-- import_tasks: install_netdata.yaml
-  tags:
-    - netdata

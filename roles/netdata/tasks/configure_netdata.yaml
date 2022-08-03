@@ -1,0 +1,71 @@
+- name: Disable Netdata Cloud integration
+  become: true
+  ansible.builtin.copy:
+    src: cloud.d.conf
+    dest: /var/lib/netdata/cloud.d/cloud.conf
+    owner: root
+    group: netdata
+    mode: "0640"
+  notify: "Restart Netdata service"
+
+- name: Disable Netdata analytics
+  become: true
+  ansible.builtin.file:
+    path: /etc/netdata/.opt-out-from-anonymous-statistics
+    state: touch
+    owner: root
+    group: root
+    mode: "0600"
+    modification_time: preserve
+    access_time: preserve
+
+
+- name: Generate TLS keys on parent nodes
+  become: true
+  when: netdata_parent
+  block:
+
+  - name: Generate TLS private key on parent nodes
+    community.crypto.openssl_privatekey:
+      path: /etc/netdata/ssl/key.pem
+      type: Ed25519
+      owner: root
+      group: netdata
+      mode: "0640"
+
+  - name: Generate TLS certificate on parent nodes
+    community.crypto.x509_certificate:
+      path: /etc/netdata/ssl/cert.pem
+      privatekey_path: /etc/netdata/ssl/key.pem
+      provider: selfsigned
+      owner: root
+      group: netdata
+      mode: "0640"
+
+
+- name: Configure Netdata
+  become: true
+  ansible.builtin.template:
+    src: netdata.conf.j2
+    dest: /etc/netdata/netdata.conf
+    owner: root
+    group: netdata
+    mode: "0640"
+  notify: "Restart Netdata service"
+
+- name: Generate streaming API key
+  become: true
+  no_log: true  # avoid logging API key
+  run_once: true
+  ansible.builtin.set_fact:
+    netdata_streaming_key: "{{ lookup('ansible.builtin.password', '/dev/null', length=32) | to_uuid }}"
+
+- name: Configure Netdata streaming
+  become: true
+  ansible.builtin.template:
+    src: stream.conf.j2
+    dest: /etc/netdata/stream.conf
+    owner: root
+    group: netdata
+    mode: "0640"
+  notify: "Restart Netdata service"

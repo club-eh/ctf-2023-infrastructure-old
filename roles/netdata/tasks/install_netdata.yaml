@@ -1,4 +1,4 @@
-- name: Check if netdata repo is installed
+- name: Check if Netdata repo is installed
   # this is honestly a hack, but the alternative is a much slower mess
   ansible.builtin.stat:
     path: /etc/yum.repos.d/netdata-edge.repo
@@ -8,14 +8,26 @@
   throttle: "{{ dnf_throttle | default(0) }}"  # allow throttling via inventory or extra variable
   block:
 
-  - name: Install netdata repo
-    when: "not netdata_repo.stat.exists"
+  - name: Install Netdata repo
+    when: not netdata_repo.stat.exists
     ansible.builtin.dnf:
       state: present
       name: "https://packagecloud.io/netdata/netdata/packages/fedora/36/netdata-repo-edge-1-2.noarch.rpm/download.rpm"
       disable_gpg_check: true
 
-  - name: Install or update netdata
+  - name: Install / update Netdata
     ansible.builtin.dnf:
       state: latest
       name: netdata
+    notify: "Restart Netdata service"
+
+  - name: Install python-cryptography on parent nodes (for TLS cert generation)
+    ansible.builtin.dnf:
+      state: present
+      name: python3-cryptography
+
+- name: Enable Netdata service
+  become: true
+  ansible.builtin.systemd:
+    name: netdata.service
+    enabled: true
