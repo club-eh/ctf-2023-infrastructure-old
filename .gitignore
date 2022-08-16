@@ -1,3 +1,8 @@
+# ignore Python stuff
+__pycache__/
+.mypy_cache/
+.venv/
+
 # ignore local vagrant files
 /.vagrant
 /.package-cache
