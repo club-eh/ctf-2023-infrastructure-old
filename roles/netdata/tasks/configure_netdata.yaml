@@ -53,12 +53,12 @@
     mode: "0640"
   notify: "Restart Netdata service"
 
-- name: Generate streaming API key
+- name: Derive streaming API key
   become: true
   no_log: true  # avoid logging API key
-  run_once: true
+  when: not netdata_parent  # only create streaming keys for child nodes
   ansible.builtin.set_fact:
-    netdata_streaming_key: "{{ lookup('ansible.builtin.password', '/dev/null', length=32) | to_uuid }}"
+    netdata_streaming_key: "{{ host_root_key | derive_key('netdata-streaming-api-key-1', 'uuid') }}"
 
 - name: Configure Netdata streaming
   become: true
