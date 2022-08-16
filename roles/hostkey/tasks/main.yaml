@@ -19,16 +19,17 @@
     cmd: "dd if=/dev/urandom of=/root/.ansible-host-key bs=128 count=1"
 
 # Read key file as host fact
-- name: Read host key
-  no_log: true  # avoid revealing host key
+- no_log: true  # avoid revealing host key
   block:
 
   # Read the file (as base64)
-  - ansible.builtin.slurp:
-      src: /root/.ansible-host-key
+  - name: Read host key
     become: true
+    ansible.builtin.slurp:
+      src: /root/.ansible-host-key
     register: hostkey_value
 
   # Store as fact
-  - ansible.builtin.set_fact:
+  - name: Set host key fact
+    ansible.builtin.set_fact:
       host_root_key: "{{ hostkey_value.content }}"
