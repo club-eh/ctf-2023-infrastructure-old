@@ -4,6 +4,15 @@
 - hosts: all
   roles:
     - base
+  tags:
+    - base
+
+# Host-specific root key generation
+- hosts: all
+  roles:
+    - hostkey
+  tags:
+    - hostkey
 
 # Internal network
 - hosts: all
@@ -16,6 +25,8 @@
 # General tasks for all machines
 - hosts: all
   roles:
+    - common
+  tags:
     - common
 
 # Setup Netdata for all machines

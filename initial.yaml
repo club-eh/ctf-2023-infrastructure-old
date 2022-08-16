@@ -1,6 +1,7 @@
 # Playbook for initial provisioning
 
-# Base provisioning for all machines (does not depend on host availability)
+# Base provisioning for all machines (without any inter-host dependencies)
 - hosts: all
   roles:
     - base
+    - hostkey

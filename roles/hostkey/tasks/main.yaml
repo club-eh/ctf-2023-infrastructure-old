@@ -1,0 +1,34 @@
+# Ensure file exists, with proper permissions (if it doesn't, it will be created)
+- name: Check if valid hostkey exists
+  become: true
+  ansible.builtin.file:
+    state: touch
+    path: /root/.ansible-host-key
+    owner: root
+    group: root
+    mode: "0400"
+    modification_time: preserve
+    access_time: preserve
+  register: hostkey_status
+
+# Regenerate a new key if the key did not previously exist, had incorrect permissions, or is of incorrect size
+- name: Generate new host key
+  become: true
+  when: hostkey_status.changed or hostkey_status.size != 128
+  ansible.builtin.shell:
+    cmd: "dd if=/dev/urandom of=/root/.ansible-host-key bs=128 count=1"
+
+# Read key file as host fact
+- name: Read host key
+  no_log: true  # avoid revealing host key
+  block:
+
+  # Read the file (as base64)
+  - ansible.builtin.slurp:
+      src: /root/.ansible-host-key
+    become: true
+    register: hostkey_value
+
+  # Store as fact
+  - ansible.builtin.set_fact:
+      host_root_key: "{{ hostkey_value.content }}"
