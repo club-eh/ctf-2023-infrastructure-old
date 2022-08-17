@@ -1,6 +1,0 @@
-# Playbook for flagship machine
-
-- hosts: flagship
-  roles:
-    - common
-    - flagship

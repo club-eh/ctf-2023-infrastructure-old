@@ -1,6 +1,0 @@
-# Playbook for challenge machines
-
-- hosts: challenges
-  roles:
-    - common
-    - challenges
