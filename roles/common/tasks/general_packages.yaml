@@ -11,3 +11,12 @@
       micro,  # enhanced nano
       ripgrep,  # enhanced grep
     ]
+
+- name: Install packages required for Ansible deployment
+  become: true
+  throttle: "{{ dnf_throttle | default(0) }}"
+  ansible.builtin.dnf:
+    state: present
+    name: [
+      python3-cryptography,  # required for SSL certificate generation
+    ]

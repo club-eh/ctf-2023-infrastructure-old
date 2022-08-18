@@ -21,11 +21,6 @@
       name: netdata
     notify: "Restart Netdata service"
 
-  - name: Install python-cryptography on parent nodes (for TLS cert generation)
-    ansible.builtin.dnf:
-      state: present
-      name: python3-cryptography
-
 - name: Enable Netdata service
   become: true
   ansible.builtin.systemd:
