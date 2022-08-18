@@ -1,0 +1,13 @@
+- name: Install / update Nginx
+  become: true
+  throttle: "{{ dnf_throttle | default(0) }}"  # allow throttling via inventory or extra variable
+  ansible.builtin.dnf:
+    state: latest
+    name: nginx
+  notify: "Restart Nginx service"
+
+- name: Enable Nginx service
+  become: true
+  ansible.builtin.systemd:
+    name: nginx.service
+    enabled: true

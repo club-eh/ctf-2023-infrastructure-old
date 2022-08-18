@@ -1,0 +1,5 @@
+- name: Restart Nginx service
+  become: true
+  ansible.builtin.systemd:
+    name: nginx.service
+    state: restarted

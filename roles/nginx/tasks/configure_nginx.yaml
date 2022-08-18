@@ -1,0 +1,73 @@
+- name: Configure Nginx
+  become: true
+  notify: "Restart Nginx service"  # trigger restart if anything here changes
+  block:
+
+  - name: Install base Nginx config files
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: "/etc/nginx/{{ item }}"
+      owner: root
+      group: nginx
+      mode: "0640"
+    loop:
+      - nginx.conf
+      - ssl-dhparam.pem
+
+  - name: Install Nginx SSL config
+    ansible.builtin.template:
+      src: ssl.conf.j2
+      dest: /etc/nginx/ssl.conf
+      owner: root
+      group: nginx
+      mode: "0640"
+
+  - name: Create SSL certificate directory
+    ansible.builtin.file:
+      state: directory
+      path: /etc/nginx/ssl
+      owner: root
+      group: nginx
+      mode: "0750"
+
+  - name: Generate self-signed certificates
+    when: use_self_signed_certs | default(false)
+    block:
+
+    - name: Generate self-signed private keys
+      community.crypto.openssl_privatekey:
+        path: /etc/nginx/ssl/server.key
+        type: RSA
+        owner: root
+        group: nginx
+        mode: "0640"
+
+    - name: Generate self-signed CSRs
+      community.crypto.openssl_csr:
+        path: /etc/nginx/ssl/server.csr
+        privatekey_path: /etc/nginx/ssl/server.key
+        common_name: "{{ ansible_host }}"
+        subject_alt_name: "DNS:*.{{ domain_name | default(ansible_host) }},DNS:{{ domain_name | default(ansible_host) }},IP:{{ ansible_host }}"
+
+    - name: Generate self-signed certificates
+      community.crypto.x509_certificate:
+        path: /etc/nginx/ssl/server.crt
+        privatekey_path: /etc/nginx/ssl/server.key
+        csr_path: /etc/nginx/ssl/server.csr
+        provider: selfsigned
+        owner: root
+        group: nginx
+        mode: "0644"
+
+  - name: Install site-specific config files
+    ansible.builtin.template:
+      src: "{{ item }}"
+      dest: "/etc/nginx/conf.d/{{ item | basename | splitext | first }}"
+      owner: root
+      group: nginx
+      mode: "0640"
+    # for each group, process all files from "templates/<group>/*"
+    loop: >-
+      {%- for group_name in group_names -%}
+      {{ query('fileglob', 'templates/' ~ group_name ~ '/*') }}
+      {%- endfor -%}

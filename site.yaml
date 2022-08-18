@@ -29,6 +29,13 @@
   tags:
     - common
 
+# Setup Nginx on flagship
+- hosts: flagship
+  roles:
+    - nginx
+  tags:
+    - nginx
+
 # Setup Netdata for all machines
 - hosts: all
   roles:
