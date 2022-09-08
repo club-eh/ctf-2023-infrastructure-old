@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
 
   # Define flagship machine
   config.vm.define "ctf-flagship" do |machine|
-    machine.vm.network :private_network, ip: "192.168.61.10/24"
+    machine.vm.network :private_network, ip: "192.168.61.10"
   end
 
   # Define challenge machines
@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
     challenge_machines << machine_name
     # define the machine
     config.vm.define machine_name do |machine|
-      machine.vm.network :private_network, ip: "192.168.61.#{10 + mid}/24"
+      machine.vm.network :private_network, ip: "192.168.61.#{10 + mid}"
     end
   end
 
