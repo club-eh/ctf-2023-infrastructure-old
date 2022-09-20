@@ -1,0 +1,13 @@
+- name: Reload systemd configuration
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart CTFd
+  become: true
+  ansible.builtin.systemd:
+    state: restarted
+    name: "{{ item }}"
+  loop:
+    - ctfd.socket
+    - ctfd.service

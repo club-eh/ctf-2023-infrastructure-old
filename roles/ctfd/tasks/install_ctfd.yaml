@@ -1,0 +1,65 @@
+- name: Install system dependencies
+  become: true
+  throttle: "{{ dnf_throttle | default(0) }}"  # allow throttling via inventory or extra variable
+  ansible.builtin.dnf:
+    state: present
+    name: python3-pip
+
+- name: Install CTFd from git
+  become: true
+  become_user: ctfd
+  ansible.builtin.git:
+    dest: /opt/ctfd/app
+    repo: "https://git.sb418.net/sudoBash418/CTFd.git"
+    version: deploy
+    #repo: "https://github.com/CTFd/CTFd.git"
+    #version: 3.5.0
+  notify: "Restart CTFd"
+
+- name: Install CTFd Python dependencies
+  become: true
+  become_user: ctfd
+  ansible.builtin.pip:
+    requirements: /opt/ctfd/app/requirements.txt
+  notify: "Restart CTFd"
+
+- name: Install CTFd systemd units
+  become: true
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/usr/local/lib/systemd/system/"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - ctfd.service
+    - ctfd.socket
+  notify:
+    - "Reload systemd configuration"
+    - "Restart CTFd"
+
+- name: Enable CTFd socket on boot
+  become: true
+  ansible.builtin.systemd:
+    name: ctfd.socket
+    enabled: true
+
+- name: Install CTFd wrapper script
+  become: true
+  ansible.builtin.copy:
+    src: run-ctfd.sh
+    dest: "/usr/local/bin/run-ctfd.sh"
+    owner: root
+    group: root
+    mode: "0755"
+  notify: "Restart CTFd"
+
+- name: Install CTFd server configuration
+  become: true
+  ansible.builtin.template:
+    src: ctfd.env.j2
+    dest: "/opt/ctfd/ctfd.env"
+    owner: root
+    group: ctfd
+    mode: "0640"
+  notify: "Restart CTFd"

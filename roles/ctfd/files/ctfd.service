@@ -1,0 +1,40 @@
+[Unit]
+Description=CTFd Server
+Documentation=https://docs.ctfd.io/
+After=network.target
+Requires=ctfd.socket
+# TODO: enable when MariaDB is setup
+#After=mariadb.service
+#Requires=mariadb.service
+
+[Service]
+Type=notify
+User=ctfd
+Group=ctfd
+WorkingDirectory=/opt/ctfd/app
+EnvironmentFile=/opt/ctfd/ctfd.env
+ExecStart=/usr/local/bin/run-ctfd.sh
+ExecReload=/bin/kill -s HUP $MAINPID
+TimeoutStopSec=5
+KillMode=mixed
+Restart=on-failure
+
+# Managed directories
+LogsDirectory=ctfd
+
+# Sandboxing
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectSystem=strict
+# Allow read-write to the persistent data volume
+ReadWritePaths=/persist/ctfd
+# Create tmpfs for caching (TODO: remove when redis is setup)
+TemporaryFileSystem=/opt/ctfd/app/.data:uid=600,gid=600
+
+[Install]
+WantedBy=multi-user.target

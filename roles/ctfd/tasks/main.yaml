@@ -1,0 +1,5 @@
+# Create CTFd user
+- import_tasks: create_user.yaml
+
+# Install + configure CTFd and dependencies
+- import_tasks: install_ctfd.yaml

@@ -1,0 +1,29 @@
+- name: Create CTFd group
+  become: true
+  ansible.builtin.group:
+    name: ctfd
+    system: true
+    # hardcode numeric IDs so they don't desync with the persistent volume
+    gid: 600
+
+- name: Create CTFd user
+  become: true
+  ansible.builtin.user:
+    comment: CTFd service
+    name: ctfd
+    group: ctfd
+    password: "!"  # disable password authentication
+    system: true
+    create_home: true
+    home: /opt/ctfd
+    # hardcode numeric IDs so they don't desync with the persistent volume
+    uid: 600
+
+- name: Create persistent CTFd directory
+  become: true
+  ansible.builtin.file:
+    state: directory
+    path: /persist/ctfd
+    owner: ctfd
+    group: ctfd
+    mode: 0750
