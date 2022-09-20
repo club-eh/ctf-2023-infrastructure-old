@@ -48,3 +48,11 @@
     - netdata
   tags:
     - netdata
+
+# Setup CTFd on flagship
+- hosts: flagship
+  name: Install CTFd
+  roles:
+    - ctfd
+  tags:
+    - ctfd
