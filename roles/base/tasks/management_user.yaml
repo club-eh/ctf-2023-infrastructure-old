@@ -16,10 +16,11 @@
       user: management
       key: "{{ lookup('file', 'secrets/' ~ target_env ~ '/management_ssh_key.pub') }}"
 
-  - name: Configure password-less sudo for management user
+  - name: Configure password-less sudo for management group
     community.general.sudoers:
       state: present
       name: management_user
       group: management
+      runas: ALL  # allow impersonation of any user
       commands: ALL
       nopassword: true
