@@ -2,6 +2,7 @@
 
 # Base provisioning for all machines
 - hosts: all
+  name: Base machine provisioning
   roles:
     - base
   tags:
@@ -9,6 +10,7 @@
 
 # Host-specific root key generation
 - hosts: all
+  name: Host-specific root key generation
   roles:
     - hostkey
   tags:
@@ -16,6 +18,7 @@
 
 # Internal network
 - hosts: all
+  name: Internal network
   any_errors_fatal: true  # mesh config will fail if any hosts are not available
   roles:
     - intnet
@@ -24,6 +27,7 @@
 
 # General tasks for all machines
 - hosts: all
+  name: Common system tasks
   roles:
     - common
   tags:
@@ -31,6 +35,7 @@
 
 # Setup Nginx on flagship
 - hosts: flagship
+  name: Install nginx
   roles:
     - nginx
   tags:
@@ -38,6 +43,7 @@
 
 # Setup Netdata for all machines
 - hosts: all
+  name: Install netdata
   roles:
     - netdata
   tags:
