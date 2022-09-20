@@ -1,42 +1,9 @@
-# Generate key file if it doesn't exist
-- name: Generate new private key
-  become: true
-  no_log: true  # avoid logging private keys
-  ansible.builtin.shell:
-    cmd: "umask 177 && wg genkey | tee /root/intnet-privatekey"
-    creates: /root/intnet-privatekey
-  register: intnet_privkey_generated
-
-# Ensure correct permissions
-- name: Verify private key permissions
-  become: true
-  ansible.builtin.file:
-    state: file
-    path: /root/intnet-privatekey
-    owner: root
-    group: root
-    mode: "0600"
-    follow: false
-  # fail if the file permissions are incorrect
-  check_mode: true
-  register: intnet_privkey_permissions
-  failed_when: intnet_privkey_permissions.changed
-
-# Read key file if it already exists
-- name: Read private key file
-  become: true
-  no_log: true  # avoid logging private keys
-  when: not intnet_privkey_generated.changed
-  ansible.builtin.slurp:
-    src: /root/intnet-privatekey
-  register: intnet_privkey_read
-
-# Store private key as fact
-- name: Set private key fact
+# Derive and store private key as fact
+- name: Derive private key
   no_log: true  # avoid logging private keys
   ansible.builtin.set_fact:
     intnet_privkey:
-      "{{ ( intnet_privkey_generated.stdout if intnet_privkey_generated.changed else intnet_privkey_read.content | b64decode ) | trim }}"
+      "{{ host_root_key | derive_key('wireguard-internal-network-key-1', 'base64', 32) }}"
 
 
 # Derive public key from the private key (derivation is deterministic)
