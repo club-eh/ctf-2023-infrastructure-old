@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
   # Use Ansible to semi-provision machines (with an auto-generated inventory file)
   # Note that Vagrant runs Ansible against each machine independently
   config.vm.provision :ansible do |ansible|
-    ansible.playbook = "initial.yaml"
+    ansible.playbook = "../ansible/initial.yaml"
     ansible.groups = {
       "flagship" => ["ctf-flagship"],
       "challenges" => challenge_machines
