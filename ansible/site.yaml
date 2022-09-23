@@ -41,13 +41,21 @@
   tags:
     - nginx
 
-# Setup Netdata for all machines
+# Setup Netdata on all machines
 - hosts: all
   name: Install netdata
   roles:
     - netdata
   tags:
     - netdata
+
+# Setup MariaDB on flagship
+- hosts: flagship
+  name: Install MariaDB
+  roles:
+    - db
+  tags:
+    - db
 
 # Setup CTFd on flagship
 - hosts: flagship

@@ -1,0 +1,3 @@
+# ignore custom local inventories
+/inventories/local*
+!/inventories/local-vagrant.ini

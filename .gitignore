@@ -3,13 +3,5 @@ __pycache__/
 .mypy_cache/
 .venv/
 
-# ignore local vagrant files
-/.vagrant
-/.package-cache
-
-# ignore custom local inventories
-/inventories/local*
-!/inventories/local-vagrant.ini
-
 # ignore local secrets
 /secrets/local*

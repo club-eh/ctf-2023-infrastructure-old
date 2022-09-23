@@ -2,7 +2,7 @@
 
 # SSH credentials
 ansible_user: management
-ansible_ssh_private_key_file: "secrets/{{ target_env }}/management_ssh_key"
+ansible_ssh_private_key_file: "../secrets/{{ target_env }}/management_ssh_key"
 
 # Timezone to set across all machines
 machine_timezone: America/Edmonton
