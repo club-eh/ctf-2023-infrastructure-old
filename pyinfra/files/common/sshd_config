@@ -1,0 +1,17 @@
+# Custom sshd_config applied via pyinfra
+
+
+# Disable X11 forwarding (unused and a security risk)
+X11Forwarding no
+
+# Disable root login
+PermitRootLogin no
+
+# Disable password auth and force public key authentication
+PubkeyAuthentication yes
+PasswordAuthentication no
+AuthenticationMethods publickey
+
+# Only allow users in the `ssh` group to login (and the management user)
+AllowUser management
+AllowGroup ssh-users

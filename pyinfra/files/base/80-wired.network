@@ -1,0 +1,11 @@
+# Standard IPv4-only DHCP config for Ethernet interfaces
+
+[Match]
+Name=en*
+
+[Network]
+DHCP=ipv4
+
+# Disable IPv6 (https://wiki.archlinux.org/title/IPv6#systemd-networkd_3)
+LinkLocalAddressing=no
+IPv6AcceptRA=no

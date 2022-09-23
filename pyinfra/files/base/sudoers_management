@@ -1,0 +1,2 @@
+# Allow password-less access to any account from management user
+management ALL=(ALL) NOPASSWD: ALL

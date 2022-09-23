@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "ctf-2023-pyinfra"
+version = "0.1.0"
+description = ""
+authors = [
+	"Thomas Bork <sudobash418@gmail.com>",
+]
+packages = [{include = "ctf_2023_pyinfra"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyinfra = { git = "https://git.sb418.net/sudoBash418/pyinfra.git", branch = "private-temp-directories" }
+attrs = "^22.1.0"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.971"
+rope = "^1.3.0"
+isort = "^5.10.1"
+ipython = "^8.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

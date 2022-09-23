@@ -1,0 +1,13 @@
+# Static IP configuration for Vagrant environments
+
+[Match]
+Name=eth1
+
+[Network]
+Address={{ vagrant_static_ip }}/24
+Gateway={{ vagrant_static_gateway }}
+DNS={{ vagrant_static_gateway }}
+
+# Disable IPv6 (https://wiki.archlinux.org/title/IPv6#systemd-networkd_3)
+LinkLocalAddressing=no
+IPv6AcceptRA=no
