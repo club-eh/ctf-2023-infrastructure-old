@@ -11,6 +11,7 @@ packages = [{include = "ctf_2023_pyinfra"}]
 python = "^3.10"
 pyinfra = { git = "https://git.sb418.net/sudoBash418/pyinfra.git", branch = "unified-patches" }
 attrs = "^22.1.0"
+blake3 = "^0.3.1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^0.971"
