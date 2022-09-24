@@ -5,6 +5,7 @@ from pyinfra.api import deploy
 from pyinfra.facts.systemd import SystemdStatus
 from pyinfra.operations import dnf, files, systemd
 
+from util import get_file_path
 from util.reactor import Reactor, notify
 
 
@@ -46,7 +47,7 @@ def apply():
 
 	notify(files.put(
 		name = "Install default network configuration",
-		src = "files/base/80-wired.network",
+		src = get_file_path("80-wired.network"),
 		dest = "/etc/systemd/network/80-wired.network",
 		user = "root",
 		group = "root",
@@ -55,7 +56,7 @@ def apply():
 	if hasattr(host.data, "vagrant_static_ip"):
 		notify(files.template(
 			name = "Install Vagrant static IP network configuration",
-			src = "files/base/10-vagrant-static.network.j2",
+			src = get_file_path("10-vagrant-static.network.j2"),
 			dest = "/etc/systemd/network/10-vagrant-static.network",
 			user = "root",
 			group = "root",

@@ -1,7 +1,7 @@
 from pyinfra.api import deploy
 from pyinfra.operations import files, server
 
-from util import ensure_user_in_groups
+from util import ensure_user_in_groups, get_file_path
 
 
 @deploy("Configure SSH")
@@ -21,7 +21,7 @@ def apply():
 	# Install + apply SSH config
 	sshd_config = files.put(
 		name = "Install SSH configuration",
-		src = "files/common/sshd_config",
+		src = get_file_path("sshd_config"),
 		dest = "/etc/sshd_config.d/20-custom.conf",
 		user = "root",
 		group = "root",

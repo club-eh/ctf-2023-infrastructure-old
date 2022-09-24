@@ -4,7 +4,7 @@ from pyinfra import host
 from pyinfra.api import deploy
 from pyinfra.operations import server
 
-from util import get_secrets_dir
+from util import get_file_path, get_secrets_dir
 from util.timezone import timezone
 
 from . import systemd_networkd
@@ -23,7 +23,7 @@ def apply():
 	)
 	server.files.put(
 		name = "Enable password-less sudo for management user",
-		src = "files/base/sudoers_management",
+		src = get_file_path("sudoers_management"),
 		dest = "/etc/sudoers.d/management",
 		user = "root",
 		group = "root",

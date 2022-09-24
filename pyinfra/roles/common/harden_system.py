@@ -1,13 +1,15 @@
 from pyinfra.api import deploy
 from pyinfra.operations import files, server
 
+from util import get_file_path
+
 
 @deploy("Harden system")
 def apply():
 	# General system hardening via sysctl
 	sysctl_hardening = files.put(
 		name = "Install system hardening sysctl configuration",
-		src = "files/common/sysctl-hardening.conf",
+		src = get_file_path("sysctl-hardening.conf"),
 		dest = "/etc/sysctl.d/95-system-hardening.conf",
 		user = "root",
 		group = "root",
@@ -34,7 +36,7 @@ def apply():
 	)
 	files.put(
 		name = "Install override for systemd-logind to bypass hidepid",
-		src = "files/common/hidepid-systemd-logind-override.conf",
+		src = get_file_path("hidepid-systemd-logind-override.conf"),
 		dest = "/etc/systemd/system/systemd-logind.service.d/hidepid-bypass.conf",
 		create_remote_dir = True,
 		user = "root",
