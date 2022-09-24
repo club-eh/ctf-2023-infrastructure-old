@@ -34,6 +34,20 @@ case "$1" in
 esac
 
 
+# colored output
+if which tput >/dev/null 2>&1; then
+	C_GREEN="$(tput setaf 2)"
+	C_LBLUE="$(tput setaf 12)"
+	C_RESET="$(tput sgr0)"
+else
+	C_GREEN=""
+	C_LBLUE=""
+	C_RESET=""
+fi
+msg_action() { echo "$C_GREEN""$@""$C_RESET"; }
+msg_info() { echo "$C_LBLUE""$@""$C_RESET"; }
+
+
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"  # determine location of this script
 TARGET_DIR="${SCRIPT_DIR}/secrets/${ENVIRONMENT}"
 
@@ -43,8 +57,35 @@ mkdir -p "$TARGET_DIR"
 
 # generate SSH keypair for management account
 if [[ ! -f "$TARGET_DIR"/management_ssh_key ]]; then
-	echo "> generating management SSH key"
+	msg_action "> generating management SSH key"
 	ssh-keygen -q -N "" -t ed25519 -f "$TARGET_DIR"/management_ssh_key -C "Management SSH key (${ENVIRONMENT} env)"
 else
-	echo "> management SSH key already exists, skipping"
+	msg_info "> management SSH key already exists, skipping"
 fi
+
+
+# generate per-host root keys
+mkdir -p "$TARGET_DIR"/hostkeys
+for machine in "ctf-flagship" "ctf-challenges-1"; do
+	machine_rootkey="${TARGET_DIR}/hostkeys/${machine}.key"
+	if [[ ! -f "$machine_rootkey" ]]; then
+		msg_action "> generating host root key for ${machine}"
+		touch "$machine_rootkey"
+		chmod 600 "$machine_rootkey"
+		head -c 256 /dev/urandom > "$machine_rootkey"
+	else
+		msg_info "> host root key for ${machine} already exists, skipping"
+	fi
+done
+
+
+# obtain SSL certificates
+case "$ENVIRONMENT" in
+	local)
+		# generate self-signed certificates
+		
+		;;
+	production|staging)
+		# obtain Let's Encrypt certificates (TODO)
+		;;
+esac
