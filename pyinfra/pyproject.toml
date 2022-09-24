@@ -9,7 +9,7 @@ packages = [{include = "ctf_2023_pyinfra"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pyinfra = { git = "https://git.sb418.net/sudoBash418/pyinfra.git", branch = "private-temp-directories" }
+pyinfra = { git = "https://git.sb418.net/sudoBash418/pyinfra.git", branch = "unified-patches" }
 attrs = "^22.1.0"
 
 [tool.poetry.group.dev.dependencies]
