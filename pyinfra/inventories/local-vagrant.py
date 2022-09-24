@@ -7,28 +7,36 @@ MACHINE_PREFIX = "ctf-"
 CHALLENGE_MACHINES = 1
 
 
-def machine(name: str, conn_address: str):
+def machine(name: str, public_ip: IPv4Address, intnet_ip: IPv4Address, **kwargs):
 	"""DRY wrapper to generate host entries.
 
 	name: Name of the machine.
-	conn_address: The actual IP / hostname that can be used to connect to the machine via SSH.
+	public_ip: The "public"-facing IP / hostname (can normally be used to connect to the machine via SSH).
+	intnet_addr: The internal IP for the Wireguard internal network.
 	"""
 
 	machine_name = MACHINE_PREFIX + name
 
 	return (machine_name, {
-		"ssh_hostname": conn_address,
+		"ssh_hostname": public_ip.compressed,
 		"hostname": machine_name,
 		"domain": machine_name + ".localctf",
-		"vagrant_static_ip": conn_address,
+		"vagrant_static_ip": public_ip.compressed,
+		"intnet_ip": intnet_ip.compressed,
+		**kwargs,
 	})
 
 
-flagship = [machine("flagship", "192.168.61.10")]
+flagship = [machine(
+	"flagship",
+	public_ip=IPv4Address("192.168.61.10"),
+	intnet_ip=IPv4Address("192.168.50.1"),
+)]
 
 challenges = [machine(
-	f"challenges-{n}",
-	(IPv4Address("192.168.61.10") + n).compressed,
-) for n in range(1, CHALLENGE_MACHINES + 1)]
+	f"challenges-{n+1}",
+	public_ip=IPv4Address("192.168.61.11") + n,
+	intnet_ip=IPv4Address("192.168.50.16") + n,
+) for n in range(CHALLENGE_MACHINES)]
 
 local = vagrant = [*flagship, *challenges]

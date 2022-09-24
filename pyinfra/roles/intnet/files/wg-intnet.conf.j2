@@ -1,0 +1,22 @@
+# Unofficial documentation: https://github.com/pirate/wireguard-docs#config-reference
+
+{% set wg_port = 51820 -%}
+
+
+[Interface]
+# Name = {{ hostname }}
+Address = {{ intnet_ip }}/24
+ListenPort = {{ wg_port }}
+PrivateKey = {{ intnet_privkey }}
+
+
+{# Generate a section for each peer -#}
+{% for peer in intnet_peers -%}
+
+[Peer]
+# Name = {{ peer.name }}
+Endpoint = {{ peer.public_addr }}:{{ wg_port }}
+PublicKey = {{ peer.pubkey }}
+AllowedIPs = {{ peer.intnet_ip }}/32
+
+{% endfor -%}
