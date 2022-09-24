@@ -62,7 +62,6 @@ def apply():
 			group = "root",
 			mode = "0644",
 			vagrant_static_ip = host.data.vagrant_static_ip,
-			vagrant_static_gateway = host.data.vagrant_static_gateway,
 		), restart_systemd_networkd)
 
 	if restart_systemd_networkd.triggered:
