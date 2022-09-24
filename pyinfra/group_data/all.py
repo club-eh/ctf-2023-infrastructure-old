@@ -5,4 +5,4 @@ ssh_user = "management"
 timezone = "America/Edmonton"
 
 # Do not serialize DNF operations by default
-dnf_serialize = False
+dnf_serial = False

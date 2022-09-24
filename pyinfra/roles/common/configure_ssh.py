@@ -4,7 +4,7 @@ from pyinfra.operations import files, server
 from util import ensure_user_in_groups
 
 
-@deploy("Harden SSH")
+@deploy("Configure SSH")
 def apply():
 	# Make sure `ssh-users` group exists
 	server.group(
@@ -18,8 +18,8 @@ def apply():
 		groups = ["ssh-users"],
 	)
 
-	# Harden SSH daemon
-	sshd_hardening = files.put(
+	# Install + apply SSH config
+	sshd_config = files.put(
 		name = "Install SSH configuration",
 		src = "files/common/sshd_config",
 		dest = "/etc/sshd_config.d/20-custom.conf",
@@ -27,7 +27,7 @@ def apply():
 		group = "root",
 		mode = "0600",
 	)
-	if sshd_hardening.changed:
+	if sshd_config.changed:
 		server.systemd.service(
 			name = "Restart SSH daemon to apply configuration",
 			service = "sshd.service",

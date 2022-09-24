@@ -13,7 +13,7 @@ def apply():
 	dnf.packages(
 		name = "Install systemd-networkd",
 		packages = ["systemd-networkd"],
-		_serial = host.data.dnf_serialize,
+		_serial = host.data.dnf_serial,
 	)
 
 	# only try to disable NetworkManager service if it existed originally
@@ -31,7 +31,7 @@ def apply():
 		name = "Remove NetworkManager",
 		packages = ["NetworkManager"],
 		present = False,
-		_serial = host.data.dnf_serialize,
+		_serial = host.data.dnf_serial,
 	)
 
 	systemd.service(
