@@ -1,7 +1,7 @@
 # Dynamic inventory file for bootstrapping a Vagrant local test environment.
 
-from ipaddress import IPv4Address
 import os
+from ipaddress import IPv4Address
 
 from pyinfra.connectors import vagrant
 

@@ -18,6 +18,15 @@ rope = "^1.3.0"
 isort = "^5.10.1"
 ipython = "^8.5.0"
 
+[tool.isort]
+skip_gitignore = true
+lines_after_imports = 2
+sections = ["FUTURE", "TYPING", "STDLIB", "THIRDPARTY", "PYINFRA", "FIRSTPARTY", "LOCALFOLDER"]
+no_lines_before = ["typing"]
+known_typing = ["typing", "typing_extensions", "types"]
+known_pyinfra = ["pyinfra", "pyinfra_cli"]
+known_first_party = ["deploys", "roles", "util"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

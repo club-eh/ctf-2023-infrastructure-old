@@ -1,5 +1,5 @@
 from pyinfra import host
-from pyinfra.api import operation, FactBase
+from pyinfra.api import FactBase, operation
 from pyinfra.facts.server import Which
 
 

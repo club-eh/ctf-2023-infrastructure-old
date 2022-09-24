@@ -1,6 +1,13 @@
 # Initial deploy - prepares the system for later deployments
 
-from pyinfra import local
+from pyinfra import config
+
+from roles import base
 
 
-local.include("roles/base.py")
+# Run everything with sudo by default
+config.SUDO = True
+
+
+# Initial system preparation
+base.apply()

@@ -1,14 +1,16 @@
 # Site-wide deployment (without stateless changes; ex. upgrading to the latest packages)
 
-from pyinfra import local, host, config
-from pyinfra.api import deploy
+from pyinfra import config
+
+from roles import base, common
 
 
-config.TEMP_DIR = "/tmp/pyinfra-deploy"
+# Run everything with sudo by default
+config.SUDO = True
 
 
 # Initial system preparation
-local.include("roles/base.py")
+base.apply()
 
 # Common system / package / security changes for all machines
-local.include("roles/common.py")
+common.apply()

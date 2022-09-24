@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from pyinfra import host
-from pyinfra.api import operation, StringCommand
+from pyinfra.api import StringCommand, operation
 from pyinfra.facts.server import Groups, Users
 
 

@@ -1,4 +1,4 @@
-from lib.secrets import get_secrets_dir
+from util import get_secrets_dir
 
 
 # Declare environment name
