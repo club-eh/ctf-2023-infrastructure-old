@@ -1,0 +1,34 @@
+upstream ctfd_backend {
+	server unix:/run/ctfd-server.sock fail_timeout=0;
+}
+
+# redirect to HTTPS
+server {
+	listen 80 deferred;
+
+	location / {
+		return 301 https://$host$request_uri;
+	}
+}
+
+server {
+	listen 443 ssl http2 deferred;
+	server_name netdata.{{ host.data.domain }};
+
+	client_max_body_size 64M;
+
+	# use global SSL config
+	include /etc/nginx/ssl.conf;
+
+	# forward all requests to CTFd backend
+	location / {
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_store off;
+		proxy_buffering off;
+		proxy_redirect off;
+
+		proxy_pass http://ctfd_backend;
+	}
+}
