@@ -41,6 +41,8 @@ def apply():
 			"mdadm",
 			# PC/SC smart card support
 			"pcsc-lite",
+			# Bluetooth support
+			"bluez",
 		],
 		_serial = host.data.dnf_serial,
 	), reload_systemd)
@@ -107,4 +109,4 @@ def apply():
 
 	# Reload systemd daemon if needed
 	if reload_systemd:
-		server.systemd.daemon_reload()
+		server.systemd.daemon_reload(name="Reload systemd daemon")
