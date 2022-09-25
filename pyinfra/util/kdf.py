@@ -152,4 +152,4 @@ class KeySource:
 
 		raw_key = cls.derive_key(host, identifier, 16)
 
-		return str(uuid.UUID(version=4, bytes=raw_key))
+		return str(uuid.UUID(version=4, bytes=bytes(raw_key)))
