@@ -66,7 +66,7 @@ def apply():
 			notify(files.template(
 				name = f"Install site config ({site_config_relpath})",
 				src = site_config,
-				dest = f"/etc/nginx/conf.d/{site_config_relpath}",
+				dest = f"/etc/nginx/conf.d/{site_config_relpath.with_suffix('')}",  # removes the .j2 extension
 				**CONFIG_FILE_PERMS,
 			), reload_nginx)
 
