@@ -16,6 +16,8 @@ server {
 	listen 443 ssl http2;
 	server_name netdata.{{ host.data.domain }};
 
+	access_log /var/log/nginx/netdata-access.log;
+
 	# use global SSL config
 	include /etc/nginx/ssl.conf;
 

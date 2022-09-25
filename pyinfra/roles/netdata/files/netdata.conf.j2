@@ -1,6 +1,9 @@
 [global]
 	run as user = netdata
 
+	# nginx logs accesses for us
+	access log = none
+
 [db]
 {% if netdata_parent %}
 	# enable local database on parent nodes
