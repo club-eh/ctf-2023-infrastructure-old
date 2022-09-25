@@ -1,0 +1,57 @@
+### Main firewall configuration
+
+
+# Drop any existing rules (this implies "accept-any-by-default")
+flush ruleset
+
+
+# Define global variables
+define INTNET_IFACE = "wg-intnet"
+
+
+# Include machine-specific config
+include "/etc/nftables/machine.nft"
+
+
+# Create table for IP traffic
+table inet firewall {
+	# NOTE: machine-specific config adds chains to this table
+
+	# Shared chain for accept rules on incoming traffic
+	chain input_shared {
+		iifname lo accept comment "Accept inbound traffic from loopback interface"
+
+		meta l4proto { icmp, icmpv6 } limit rate 10/second accept comment "Accept inbound ICMP traffic (ratelimited)"
+
+		# allow accessing SSHd from anywhere
+		tcp dport ssh accept comment "Accept inbound SSH traffic"
+		# allow accessing Wireguard from anywhere
+		udp dport 51820 accept comment "Accept inbound Wireguard traffic"
+	}
+
+	# Base-chain for traffic meant for this host
+	chain input {
+		type filter hook input priority filter
+		# Drop unmatched traffic
+		policy drop
+
+		ct state { established, related } accept comment "Accept existing, established connections"
+		ct state invalid drop comment "Drop invalid connections"
+
+		# Machine-specific accept rules
+		jump input_machine
+
+		# Shared accept rules
+		jump input_shared
+
+		iifname $INTNET_IFACE reject with icmpx type port-unreachable comment "Reject unmatched inbound traffic from intnet (instead of dropping)"
+	}
+
+	# Base-chain for traffic to be forwarded to another host
+	chain forward {
+		type filter hook forward priority filter
+		# Drop unmatched traffic
+		policy drop
+	}
+
+}

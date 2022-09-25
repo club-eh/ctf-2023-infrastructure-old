@@ -1,0 +1,21 @@
+### Machine-specific rules (included via main.nft)
+
+
+define WEB_PORTS = { 80, 443 }
+
+
+table inet firewall {
+	chain input_machine {
+		{% if allow_public %}
+		# allow accessing nginx from anywhere
+		tcp dport $WEB_PORTS accept comment "Accept inbound HTTP(S) traffic"
+		{% else %}
+		# allow accessing nginx from trusted IPs or intnet
+		tcp dport $WEB_PORTS saddr {{ trusted_ips }} accept comment "Accept inbound HTTP(S) traffic from trusted IPs"
+		iifname $INTNET_IFACE tcp dport $WEB_PORTS accept comment "Accept inbound HTTP(S) traffic from intnet"
+		{% endif %}
+
+		# allow netdata child stream from internal network
+		iifname $INTNET_IFACE tcp dport 19999 accept comment "Accept netdata child stream from intnet"
+	}
+}

@@ -2,7 +2,8 @@
 
 from pyinfra.api import deploy
 
-from . import configure_ssh, extra_packages, harden_system, setup_intnet
+from . import (configure_ssh, extra_packages, harden_system, setup_firewall,
+               setup_intnet)
 
 
 @deploy("Common")
@@ -14,4 +15,4 @@ def apply():
 
 	setup_intnet.apply()
 
-# TODO: enable and configure FirewallD
+	setup_firewall.apply()
