@@ -1,4 +1,4 @@
-# Internal Wireguard network, used for machine-to-machine communication
+# Setup internal Wireguard network (for secure machine-to-machine communication)
 
 import subprocess
 
@@ -18,7 +18,7 @@ def wg_pubkey(privkey: str):
 	return proc.stdout.decode().strip()
 
 
-@deploy("Intnet")
+@deploy("Internal network")
 def apply():
 	server.dnf.packages(
 		name = "Install Wireguard userspace tools",
