@@ -5,8 +5,7 @@ from pyinfra.api import deploy
 from pyinfra.facts.systemd import SystemdStatus
 from pyinfra.operations import dnf, files, systemd
 
-from util import get_file_path
-from util.reactor import Reactor, notify
+from util import Flag, get_file_path, notify
 
 
 @deploy("Install + configure systemd-networkd")
@@ -43,7 +42,7 @@ def apply():
 	)
 
 
-	restart_systemd_networkd = Reactor()
+	restart_systemd_networkd = Flag()
 
 	notify(files.put(
 		name = "Install default network configuration",
@@ -64,7 +63,7 @@ def apply():
 			vagrant_static_ip = host.data.vagrant_static_ip,
 		), restart_systemd_networkd)
 
-	if restart_systemd_networkd.triggered:
+	if restart_systemd_networkd:
 		systemd.service(
 			name = "Restart systemd-networkd to apply config changes",
 			service = "systemd-networkd.service",

@@ -7,7 +7,7 @@ from pyinfra.api import StringCommand, deploy, operation
 from pyinfra.facts.rpm import RpmPackages
 from pyinfra.operations import server
 
-from util import Reactor, get_file_path, notify
+from util import Flag, get_file_path, notify
 
 
 @operation
@@ -35,8 +35,8 @@ def install_nftables():
 
 @deploy("Setup firewall")
 def apply():
-	reload_systemd = Reactor()
-	reload_firewall = Reactor()
+	reload_systemd = Flag()
+	reload_firewall = Flag()
 
 	# swap firewalld for nftables
 	notify(install_nftables(
@@ -79,6 +79,6 @@ def apply():
 		service = "nftables.service",
 		running = True,
 		enabled = True,
-		reloaded = reload_firewall.triggered,
-		daemon_reload = reload_systemd.triggered,
+		reloaded = reload_firewall,
+		daemon_reload = reload_systemd,
 	)
