@@ -80,12 +80,29 @@ done
 
 
 # obtain SSL certificates
-case "$ENVIRONMENT" in
-	local)
-		# generate self-signed certificates
-		
+if [[ ! -f "${TARGET_DIR}/ssl-certificate.pem" ]]; then
+	case "$ENVIRONMENT" in
+		local)
+			msg_action "> generating self-signed SSL certificate"
+			# generate self-signed certificates
+			OPENSSL_ARGS=(
+				-new
+				-x509
+				-nodes
+				-days 365
+				-newkey ec
+				-pkeyopt ec_paramgen_curve:prime256v1
+				-subj "/CN=ctf-flagship"
+				-keyout "${TARGET_DIR}/ssl-certificate.key"
+				-out "${TARGET_DIR}/ssl-certificate.pem"
+			)
+			openssl req "${OPENSSL_ARGS[@]}"
 		;;
-	production|staging)
-		# obtain Let's Encrypt certificates (TODO)
+		production|staging)
+			# obtain Let's Encrypt certificates (TODO)
+			echo "> WARNING: SSL certificate generation not implemented!"
 		;;
-esac
+	esac
+else
+	msg_info "> SSL certificate already exists, skipping"
+fi
