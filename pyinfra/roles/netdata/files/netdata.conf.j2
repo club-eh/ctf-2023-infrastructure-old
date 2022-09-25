@@ -1,0 +1,59 @@
+[global]
+	run as user = netdata
+
+[db]
+{% if netdata_parent %}
+	# enable local database on parent nodes
+	mode = dbengine
+
+	# enable tier 1 storage (in addition to tier 0)
+	storage tiers = 2
+
+	# tier 0: collect every second (default)
+	update every = 1
+	# tier 0: base memory usage for caching and indexing recent metrics
+	dbengine page cache size MB = 64  # default: 32
+	# tier 0: max disk space used for historical metrics (compressed)
+	dbengine multihost disk space MB = 2048  # default: 256
+
+	# tier 1: sample every minute
+	dbengine update every iterations = 60
+	# tier 1: base memory usage for caching and indexing recent metrics
+	dbengine page cache size MB = 36
+	# tier 1: max disk space used for historical metrics (compressed)
+	dbengine multihost disk space MB = 1024
+
+{% else %}
+	# disable local database on child nodes
+	mode = none
+{% endif %}
+
+{% if not netdata_parent %}
+[health]
+	# disable health checks on child nodes
+	enabled = no
+{% endif %}
+
+[web]
+{% if netdata_parent %}
+	# enable web server on parent nodes
+	mode = static-threaded
+
+	# bind to:
+	#   - /run/netdata/netdata.sock (from nginx)
+	#   - intnet:19999 (streaming from 192.168.50.0/24)
+	# note: the unix socket only needs access to `dashboard|netdata.conf`, but netdata doesn't seem to support that
+	bind to = unix:/run/netdata/netdata.sock {{ intnet_ip }}:19999=streaming
+{% else %}
+	# disable web server on child nodes
+	mode = none
+{% endif %}
+
+[ml]
+	# disable ML-powered anomaly detection (meant to be used with Cloud)
+	enabled = no
+
+
+[statsd]
+	# disable StatsD-compatible listener
+	enabled = no

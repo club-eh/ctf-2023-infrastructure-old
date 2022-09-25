@@ -1,0 +1,17 @@
+{% if netdata_parent -%}
+{% for name, key in children.items() %}
+# Host: {{ name }}
+[{{ key }}]
+	enabled = yes
+{% endfor %}
+{% else -%}
+[stream]
+	# enable streaming on child nodes
+	enabled = yes
+	# use host-specific API key
+	api key = {{ netdata_streaming_key }}
+	# stream to flagship (via internal network)
+	destination = {{ parent_ip }}:19999
+	# ignore self-signed certificate
+	ssl skip certificate verification = yes
+{% endif -%}
