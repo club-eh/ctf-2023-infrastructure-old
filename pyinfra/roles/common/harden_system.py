@@ -1,4 +1,6 @@
-from pyinfra.api import deploy
+from pyinfra import host
+from pyinfra.api import deploy, operation
+from pyinfra.facts.files import FindInFile
 from pyinfra.operations import files, server
 
 from util import get_file_path
@@ -9,6 +11,17 @@ CONFIG_FILE_PERMS = {
 	"group": "root",
 	"mode": "0644",
 }
+
+
+@operation
+def lock_root_account():
+	# look for '^root:!!' in /etc/shadow; if it matches, the root account is locked
+	root_shadow_locked = host.get_fact(FindInFile, path="/etc/shadow", pattern=r"^root\:\!\!")
+
+	if root_shadow_locked is None or len(root_shadow_locked) == 0:
+		yield from server.shell("passwd -l root")
+	else:
+		host.noop("root account is already locked")
 
 
 @deploy("Harden system")
@@ -60,3 +73,6 @@ def apply():
 		dest = "/etc/pam.d/su",
 		**CONFIG_FILE_PERMS,
 	)
+
+	# Lock root account to prevent direct root login
+	lock_root_account(name="Lock root account")
