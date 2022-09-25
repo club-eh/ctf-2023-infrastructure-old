@@ -71,14 +71,22 @@ def apply():
 		line = "^proc /proc.*$",
 		replace = "proc /proc proc nosuid,nodev,noexec,hidepid=invisible,gid=proc 0 0",
 	)
-	files.put(
+	logind_override = files.put(
 		name = "Install override for systemd-logind to bypass hidepid",
 		src = get_file_path("hidepid-systemd-logind-override.conf"),
 		dest = "/etc/systemd/system/systemd-logind.service.d/hidepid-bypass.conf",
 		create_remote_dir = True,
 		**CONFIG_FILE_PERMS,
 	)
-	# Apply change immediately by remounting /proc
+	if logind_override.changed:
+		server.systemd.service(
+			name = "Restart systemd-logind",
+			service = "systemd-logind.service",
+			restarted = True,
+			daemon_reload = True,
+		)
+
+	# Apply hidepid setting immediately by remounting /proc
 	if fstab_hidepid_result.changed:
 		server.shell(
 			name = "Remount procfs to apply hidepid option",
