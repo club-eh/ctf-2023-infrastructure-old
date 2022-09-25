@@ -3,7 +3,7 @@ from pyinfra.api import deploy, operation
 from pyinfra.facts.files import FindInFile
 from pyinfra.operations import files, server
 
-from util import get_file_path
+from util import Flag, get_file_path, notify
 
 
 CONFIG_FILE_PERMS = {
@@ -26,6 +26,25 @@ def lock_root_account():
 
 @deploy("Harden system")
 def apply():
+	reload_systemd = Flag()
+
+	# Remove packages
+	notify(server.dnf.packages(
+		name = "Remove unused packages",
+		present = False,
+		packages = [
+			# NFS support
+			"nfs-utils", "libnfsidmap",
+			# SSSD support (central identity management software)
+			"sssd-common",
+			# software RAID support
+			"mdadm",
+			# PC/SC smart card support
+			"pcsc-lite",
+		],
+		_serial = host.data.dnf_serial,
+	), reload_systemd)
+
 	# General system hardening via sysctl
 	sysctl_hardening = files.put(
 		name = "Install system hardening sysctl configuration",
@@ -76,3 +95,8 @@ def apply():
 
 	# Lock root account to prevent direct root login
 	lock_root_account(name="Lock root account")
+
+
+	# Reload systemd daemon if needed
+	if reload_systemd:
+		server.systemd.daemon_reload()
