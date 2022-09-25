@@ -1,7 +1,8 @@
 # Basic system configuration, common across all machines
 
 from pyinfra import host
-from pyinfra.api import deploy
+from pyinfra.api import DeployError, deploy
+from pyinfra.facts.files import Directory
 from pyinfra.operations import server
 
 from util import get_file_path, get_secrets_dir
@@ -44,3 +45,18 @@ def apply():
 
 	# Replace NetworkManager with systemd-networkd
 	systemd_networkd.apply()
+
+	# Ensure /persist exists
+	if host.data.env_name == "local":
+		# for local environments, we use a plain directory instead of a separate disk
+		server.files.directory(
+			name = "Create /persist directory (for local env)",
+			path = "/persist",
+			user = "root",
+			group = "root",
+			mode = "755",
+		)
+	else:
+		persist_dir = host.get_fact(Directory, path="/persist")
+		if not persist_dir:
+			raise DeployError("/persist does not exist!")
