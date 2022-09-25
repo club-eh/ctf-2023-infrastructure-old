@@ -12,7 +12,7 @@ import blake3
 
 from pyinfra.api import Host
 
-from util import get_secrets_dir
+from util.secrets import get_secrets_dir
 
 
 HOST_KEY_SIZE = 256

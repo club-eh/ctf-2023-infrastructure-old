@@ -6,8 +6,7 @@ from pyinfra import host, inventory
 from pyinfra.api import deploy
 from pyinfra.operations import server
 
-from util import get_file_path
-from util.kdf import KeySource
+from util import KeySource, get_file_path
 
 
 def wg_pubkey(privkey: str):
