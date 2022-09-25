@@ -135,14 +135,13 @@ class KeySource:
 		return base64.b64encode(raw_key).decode()
 
 	@classmethod
-	def derive_key_uuid(cls, host: Host, identifier: str, length: int) -> str:
+	def derive_key_uuid(cls, host: Host, identifier: str) -> str:
 		"""Derive a unique key from a host-specific root key and a key-specific identifier.
 
 		Formats the derived key as a UUIDv4.
 
 		Args:
 			identifier (str): A unique identifier for this specific key. Example: "wireguard-internal-network-1"
-			length (int): The length of the derived key, in bytes.
 
 		Raises:
 			MissingHostKey: If the current host does not have a valid host key.
@@ -151,6 +150,6 @@ class KeySource:
 			The derived key as a UUIDv4 string.
 		"""
 
-		raw_key = cls.derive_key(host, identifier, length)
+		raw_key = cls.derive_key(host, identifier, 16)
 
 		return str(uuid.UUID(version=4, bytes=raw_key))
