@@ -10,9 +10,6 @@ from . import (configure_ssh, extra_packages, harden_system, setup_firewall,
 def apply():
 	harden_system.apply()
 	configure_ssh.apply()
-
 	extra_packages.apply()
-
 	setup_intnet.apply()
-
 	setup_firewall.apply()

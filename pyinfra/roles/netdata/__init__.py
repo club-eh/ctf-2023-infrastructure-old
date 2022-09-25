@@ -74,7 +74,7 @@ def apply():
 	), restart_netdata)
 
 	server.systemd.service(
-		name = "Enable and start Netdata service",
+		name = "Activate Netdata service",
 		service = "netdata.service",
 		running = True,
 		enabled = True,
