@@ -10,11 +10,15 @@ from util import Flag, get_file_path, notify
 
 @deploy("Install + configure systemd-networkd")
 def apply():
-	dnf.packages(
+	reload_systemd = Flag()
+	restart_networkd = Flag()
+
+
+	notify(dnf.packages(
 		name = "Install systemd-networkd",
 		packages = ["systemd-networkd"],
 		_serial = host.data.dnf_serial,
-	)
+	), reload_systemd)
 
 	# only try to disable NetworkManager service if it existed originally
 	# otherwise, pyinfra runs this operation every time
@@ -27,22 +31,13 @@ def apply():
 		)
 
 	# note: this comes after the disable + stop to avoid issues with missing systemd unit files
-	dnf.packages(
+	notify(dnf.packages(
 		name = "Remove NetworkManager",
 		packages = ["NetworkManager"],
 		present = False,
 		_serial = host.data.dnf_serial,
-	)
+	), reload_systemd)
 
-	systemd.service(
-		name = "Enable and activate systemd-networkd",
-		service = "systemd-networkd.service",
-		running = True,
-		enabled = True,
-	)
-
-
-	restart_systemd_networkd = Flag()
 
 	notify(files.put(
 		name = "Install default network configuration",
@@ -51,7 +46,8 @@ def apply():
 		user = "root",
 		group = "root",
 		mode = "0644",
-	), restart_systemd_networkd)
+	), restart_networkd)
+
 	if hasattr(host.data, "vagrant_static_ip"):
 		notify(files.template(
 			name = "Install Vagrant static IP network configuration",
@@ -61,11 +57,14 @@ def apply():
 			group = "root",
 			mode = "0644",
 			vagrant_static_ip = host.data.vagrant_static_ip,
-		), restart_systemd_networkd)
+		), restart_networkd)
 
-	if restart_systemd_networkd:
-		systemd.service(
-			name = "Restart systemd-networkd to apply config changes",
-			service = "systemd-networkd.service",
-			restarted = True,
-		)
+
+	systemd.service(
+		name = "Activate systemd-networkd",
+		service = "systemd-networkd.service",
+		running = True,
+		enabled = True,
+		restarted = restart_networkd,
+		daemon_reload = reload_systemd,
+	)
