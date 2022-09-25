@@ -4,6 +4,13 @@ from pyinfra.operations import files, server
 from util import get_file_path
 
 
+CONFIG_FILE_PERMS = {
+	"user": "root",
+	"group": "root",
+	"mode": "0644",
+}
+
+
 @deploy("Harden system")
 def apply():
 	# General system hardening via sysctl
@@ -11,9 +18,7 @@ def apply():
 		name = "Install system hardening sysctl configuration",
 		src = get_file_path("sysctl-hardening.conf"),
 		dest = "/etc/sysctl.d/95-system-hardening.conf",
-		user = "root",
-		group = "root",
-		mode = "0644",
+		**CONFIG_FILE_PERMS,
 	)
 	if sysctl_hardening.changed:
 		server.systemd.service(
@@ -39,9 +44,7 @@ def apply():
 		src = get_file_path("hidepid-systemd-logind-override.conf"),
 		dest = "/etc/systemd/system/systemd-logind.service.d/hidepid-bypass.conf",
 		create_remote_dir = True,
-		user = "root",
-		group = "root",
-		mode = "0644",
+		**CONFIG_FILE_PERMS,
 	)
 	# Apply change immediately by remounting /proc
 	if fstab_hidepid_result.changed:
@@ -49,3 +52,11 @@ def apply():
 			name = "Remount procfs to apply hidepid option",
 			commands = "mount -o remount /proc",
 		)
+
+	# Restrict su to wheel group
+	files.put(
+		name = "Restrict `su` access to members of wheel group",
+		src = get_file_path("pam-su.conf"),
+		dest = "/etc/pam.d/su",
+		**CONFIG_FILE_PERMS,
+	)
