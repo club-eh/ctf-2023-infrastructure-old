@@ -43,6 +43,14 @@ def apply():
 			timezone = host.data.timezone,
 		)
 
+	if host.data.env_name == "local":
+		server.files.line(
+			name = "Enable DNF package cache",
+			path = "/etc/dnf/dnf.conf",
+			present = True,
+			line = "keepcache=1",
+		)
+
 	# Replace NetworkManager with systemd-networkd
 	systemd_networkd.apply()
 
