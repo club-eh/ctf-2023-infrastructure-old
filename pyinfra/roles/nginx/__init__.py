@@ -18,12 +18,22 @@ CONFIG_FILE_PERMS = {
 def apply():
 	reload_systemd = Flag()
 	reload_nginx = Flag()
+	restart_nginx = Flag()
 
 	notify(server.dnf.packages(
 		name = "Install nginx",
 		packages = ["nginx"],
 		_serial = host.data.dnf_serial,
 	), reload_systemd)
+
+	notify(files.put(
+		name = "Lockdown nginx service",
+		src = get_file_path("service-lockdown.conf"),
+		dest = "/etc/systemd/system/nginx.service.d/lockdown.conf",
+		user = "root",
+		group = "root",
+		mode = "644",
+	), [reload_systemd, restart_nginx])
 
 	for filename in ["nginx.conf", "ssl-dhparam.pem"]:
 		notify(files.put(
@@ -76,5 +86,6 @@ def apply():
 		running = True,
 		enabled = True,
 		reloaded = reload_nginx,
+		restarted = restart_nginx,
 		daemon_reload = reload_systemd,
 	)

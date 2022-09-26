@@ -45,8 +45,8 @@ def apply():
 
 	notify(files.put(
 		name = "Lockdown MariaDB service",
-		src = get_file_path("mariadb-service-lockdown.conf"),
-		dest = "/etc/systemd/system/mariadb.service.d/mariadb-service-lockdown.conf",
+		src = get_file_path("service-lockdown.conf"),
+		dest = "/etc/systemd/system/mariadb.service.d/lockdown.conf",
 		user = "root",
 		group = "root",
 		mode = "644",
