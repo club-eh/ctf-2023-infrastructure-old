@@ -1,0 +1,5 @@
+# MariaDB client settings
+
+[client-mariadb]
+socket = /run/mariadb/mariadb.sock
+default-character-set = utf8mb4

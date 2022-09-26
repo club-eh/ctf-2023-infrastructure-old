@@ -1,0 +1,27 @@
+# MariaDB server settings
+
+[mariadb]
+log-error = /var/log/mariadb/mariadb.log
+pid-file = /run/mariadb/mariadb.pid
+
+# Store data on persist volume
+datadir = /persist/mariadb
+
+# Proper socket location (sockets do not belong in /var/lib)
+socket = /run/mariadb/mariadb.sock
+
+# Default to UTF8MB4
+collation-server = utf8mb4_unicode_ci
+character-set-server = utf8mb4
+
+
+## Security
+
+# Disable listening on any network interfaces (only accessible via Unix sockets)
+skip-networking
+
+# Disable user creation by unprivileged users
+safe-user-create = 1
+
+# Enable better password-based authentication method
+plugin-load-add = auth_ed25519
