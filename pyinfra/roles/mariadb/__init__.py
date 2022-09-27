@@ -3,9 +3,9 @@
 from pyinfra import host
 from pyinfra.api import deploy, operation
 from pyinfra.facts.rpm import RpmPackages
-from pyinfra.operations import files, server, mysql
+from pyinfra.operations import files, mysql, server
 
-from util import Flag, get_file_path, notify, KeySource
+from util import Flag, KeySource, get_file_path, notify
 
 
 @operation
@@ -90,7 +90,7 @@ def apply():
 	)
 
 	# Derive ctfd database password
-	ctfd_db_pwd = "ctfd-key" + KeySource.derive_key(host, "mariadb-ctfd-database-key", 32).hex()
+	ctfd_db_pwd = KeySource.derive_key(host, "mariadb-ctfd-database-key", 32).hex()
 
 	# Create ctfd user with permissions on ctfd database
 	# Unfortunately not idempotent
