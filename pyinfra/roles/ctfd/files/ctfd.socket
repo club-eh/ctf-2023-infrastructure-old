@@ -1,0 +1,9 @@
+[Unit]
+Description=CTFd application socket
+
+[Socket]
+ListenStream=/run/ctfd/server.sock
+# The CTFd user doesn't need permissions because the CTFd service
+# will inherit the necessesary file descriptors during socket activation.
+SocketUser=nginx
+SocketMode=0600

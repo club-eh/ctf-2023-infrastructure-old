@@ -1,0 +1,64 @@
+[Unit]
+Description=CTFd application service
+Documentation=https://docs.ctfd.io/
+Requires=ctfd.socket
+After=network.target
+After=mariadb.service
+Requires=mariadb.service
+
+
+[Service]
+Type=notify
+User=ctfd
+Group=ctfd
+WorkingDirectory=/opt/ctfd/app
+EnvironmentFile=/opt/ctfd/ctfd.env
+ExecStart=/opt/ctfd/run-ctfd.sh
+ExecReload=/bin/kill -s HUP $MAINPID
+TimeoutStopSec=5
+KillMode=mixed
+Restart=on-failure
+
+# Capabiltities
+CapabilityBoundingSet=
+NoNewPrivileges=true
+
+# Namespacing
+ProtectHostname=true
+PrivateIPC=true
+PrivateUsers=true
+# PrivateNetwork intentionally left out because it can cause issues with Type=notify services
+
+# Filesystem
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ReadWritePaths=/persist/ctfd
+# for caching (TODO: remove when redis is setup)
+ReadWritePaths=/opt/ctfd/app
+
+# Special filesystems
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectClock=true
+ProtectProc=invisible
+ProcSubset=pid
+
+# Misc. hardening
+MemoryDenyWriteExecute=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+# all network interactions are through Unix sockets
+RestrictAddressFamilies=AF_UNIX
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+SystemCallArchitectures=native
+
+
+[Install]
+WantedBy=multi-user.target

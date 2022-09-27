@@ -2,7 +2,7 @@
 
 from pyinfra import host
 
-from roles import base, common, mariadb, netdata, nginx
+from roles import base, common, ctfd, mariadb, netdata, nginx
 
 
 # Initial system preparation
@@ -18,3 +18,4 @@ netdata.apply()
 if host.data.primary_group == "flagship":
 	nginx.apply()
 	mariadb.apply()
+	ctfd.apply()
