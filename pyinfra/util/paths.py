@@ -3,9 +3,14 @@
 import inspect
 from pathlib import Path
 
+from pyinfra import host
+from pyinfra.api import DeployError
+
 
 # Absolute path of the base roles/ subdirectory
 _ROLES_DIRECTORY_PATH = (Path(__file__).parents[1] / "roles").resolve()
+# Absolute path of the base secrets/ subdirectory
+_SECRETS_DIRECTORY_PATH = (Path(__file__).parents[2] / "secrets").resolve()
 
 
 def get_role_path() -> Path:
@@ -54,3 +59,45 @@ def get_file_path(filename: str) -> Path:
 	"""
 
 	return get_role_path() / "files" / filename
+
+
+def get_secrets_dir(env_name: str | None = None) -> Path:
+	"""Returns the path to the secrets directory for this deploy environment.
+
+	Args:
+		env_name (optional): The environment to return a directory path for.
+		Defaults to the current host's env_name.
+	"""
+
+	# default to current host's environment
+	if env_name is None:
+		env_name = host.data.env_name
+
+		if env_name is None:
+			raise DeployError("Could not determine environment from current host (missing `env_name` data)")
+
+	secrets_dir = _SECRETS_DIRECTORY_PATH / env_name
+
+	# ensure the path exists
+	if not secrets_dir.exists():
+		raise DeployError(f"Secrets directory not found (should be at '{secrets_dir}')")
+
+	return secrets_dir
+
+def get_secret_path(filename: str, env_name: str | None = None) -> Path:
+	"""Returns the filepath for a given secret file.
+
+	Convenience wrapper around `get_secrets_dir()`.
+
+	Args:
+		filename (str): Relative path to the file.
+		env_name (optional): The environment to return a filepath for.
+		Defaults to the current host's env_name.
+	"""
+
+	filepath = get_secrets_dir(env_name=env_name) / filename
+
+	if not filepath.exists():
+		raise DeployError(f"Secret '{filename}' not found for '{env_name}' environment")
+
+	return filepath

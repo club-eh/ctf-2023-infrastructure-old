@@ -5,7 +5,7 @@ from pyinfra.api import DeployError, deploy
 from pyinfra.facts.files import Directory
 from pyinfra.operations import server
 
-from util import get_file_path, get_secrets_dir
+from util import get_file_path, get_secret_path
 from util.timezone import timezone
 
 from . import systemd_networkd
@@ -20,7 +20,7 @@ def apply():
 		comment = "Superuser account used for administration and automation",
 		shell = "/bin/bash",
 		create_home = True,
-		public_keys = [get_secrets_dir(host.data.env_name) / "management_ssh_key.pub"],
+		public_keys = [get_secret_path("management_ssh_key.pub")],
 	)
 	server.files.put(
 		name = "Enable password-less sudo for management user",

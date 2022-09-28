@@ -12,7 +12,7 @@ import blake3
 
 from pyinfra.api import Host
 
-from util.secrets import get_secrets_dir
+from util.paths import get_secret_path
 
 
 HOST_KEY_SIZE = 256
@@ -98,7 +98,7 @@ class KeySource:
 		loaded_host_key = host.data.get("__loaded_host_root_key", None)
 		if loaded_host_key is None:
 			# validate file
-			host_key_path: Path = get_secrets_dir(host.data.env_name) / "hostkeys" / f"{host.data.hostname}.key"
+			host_key_path: Path = get_secret_path(f"hostkeys/{host.data.hostname}.key")
 			if not host_key_path.exists():
 				raise MissingHostKey(f"Host key file not found ({host_key_path})")
 			elif host_key_path.stat().st_size != HOST_KEY_SIZE:

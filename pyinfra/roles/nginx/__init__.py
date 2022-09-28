@@ -4,7 +4,7 @@ from pyinfra import host
 from pyinfra.api import deploy
 from pyinfra.operations import files, server
 
-from util import Flag, get_file_path, get_secrets_dir, notify
+from util import Flag, get_file_path, get_secret_path, notify
 
 
 CONFIG_FILE_PERMS = {
@@ -52,7 +52,7 @@ def apply():
 
 	notify(files.put(
 		name = "Install SSL certificate",
-		src = get_secrets_dir() / "ssl-certificate.pem",
+		src = get_secret_path("ssl-certificate.pem"),
 		dest = "/etc/nginx/ssl/server.crt",
 		user = "root",
 		group = "nginx",
@@ -60,7 +60,7 @@ def apply():
 	), reload_nginx)
 	notify(files.put(
 		name = "Install SSL private key",
-		src = get_secrets_dir() / "ssl-certificate.key",
+		src = get_secret_path("ssl-certificate.key"),
 		dest = "/etc/nginx/ssl/server.key",
 		user = "root",
 		group = "nginx",
