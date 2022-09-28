@@ -5,7 +5,6 @@ description = ""
 authors = [
 	"Thomas Bork <sudobash418@gmail.com>",
 ]
-packages = [{include = "ctf_2023_pyinfra"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
