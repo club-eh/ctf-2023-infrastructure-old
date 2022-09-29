@@ -13,6 +13,10 @@ _ROLES_DIRECTORY_PATH = (Path(__file__).parents[1] / "roles").resolve()
 _SECRETS_DIRECTORY_PATH = (Path(__file__).parents[2] / "secrets").resolve()
 
 
+class PathNotFound(DeployError):
+	"""Raised by utility functions when a requested path cannot be found."""
+
+
 def get_role_path() -> Path:
 	"""Returns the current role's base directory path.
 	
@@ -44,7 +48,11 @@ def get_role_path() -> Path:
 			else:
 				# found a module under roles/
 				role_name = local_path.parts[0]
-				return _ROLES_DIRECTORY_PATH / role_name
+				role_path = _ROLES_DIRECTORY_PATH / role_name
+				# ensure the directory exists before returning it
+				if not role_path.exists():
+					raise PathNotFound(f"File resource directory not found for role '{role_name}': '{role_path}'")
+				return role_path
 
 		# couldn't find a match, move up the call stack and try again
 		frame = frame.f_back
@@ -58,7 +66,13 @@ def get_file_path(filename: str) -> Path:
 	Convenience wrapper around `get_role_path()`.
 	"""
 
-	return get_role_path() / "files" / filename
+	role_path = get_role_path()
+	file_path = role_path / "files" / filename
+
+	if not file_path.exists():
+		raise PathNotFound(f"The requested file path '{filename}' does not exist under the current role's files directory '{file_path}/files'")
+
+	return file_path
 
 
 def get_secrets_dir(env_name: str | None = None) -> Path:
@@ -80,7 +94,7 @@ def get_secrets_dir(env_name: str | None = None) -> Path:
 
 	# ensure the path exists
 	if not secrets_dir.exists():
-		raise DeployError(f"Secrets directory not found (should be at '{secrets_dir}')")
+		raise PathNotFound(f"Secrets directory not found (should be at '{secrets_dir}')")
 
 	return secrets_dir
 
@@ -98,6 +112,6 @@ def get_secret_path(filename: str, env_name: str | None = None) -> Path:
 	filepath = get_secrets_dir(env_name=env_name) / filename
 
 	if not filepath.exists():
-		raise DeployError(f"Secret '{filename}' not found for '{env_name}' environment")
+		raise PathNotFound(f"Secret '{filename}' not found for '{env_name}' environment")
 
 	return filepath
