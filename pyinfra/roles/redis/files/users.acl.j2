@@ -1,0 +1,8 @@
+{# Disable default user -#}
+user default reset
+
+{# Add admin user with full access -#}
+user admin reset on >{{ pwd_admin }} +@all allkeys allchannels
+
+{# Add ctfd user with access to all keys + general read/write commands -#}
+user ctfd reset on >{{ pwd_ctfd }} +@connection -CLIENT allkeys +@read +@write

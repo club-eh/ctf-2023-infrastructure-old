@@ -2,7 +2,7 @@
 
 from pyinfra import host
 
-from roles import base, common, ctfd, mariadb, netdata, nginx
+from roles import base, common, ctfd, mariadb, netdata, nginx, redis
 
 
 # Initial system preparation
@@ -17,5 +17,6 @@ netdata.apply()
 # Flagship-specific services
 if host.data.primary_group == "flagship":
 	nginx.apply()
+	redis.apply()
 	mariadb.apply()
 	ctfd.apply()
