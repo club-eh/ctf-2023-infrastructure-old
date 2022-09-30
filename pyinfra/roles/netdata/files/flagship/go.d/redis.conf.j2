@@ -1,0 +1,10 @@
+# Configure redis logging
+
+
+# retry connections every 15 seconds
+autodetection_retry: 15
+
+jobs:
+  # connect to local redis server
+  - name: local
+    address: 'unix://netdata:{{ redis_pwd }}@/run/redis/redis.sock'

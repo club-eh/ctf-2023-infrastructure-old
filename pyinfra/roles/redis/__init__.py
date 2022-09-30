@@ -47,7 +47,7 @@ def apply():
 		# derive a unique password for each user
 		**{
 			f"pwd_{user}" : KeySource.derive_key(host, f"redis-user-pwd-{user}", 32).hex()
-			for user in ["admin", "ctfd"]
+			for user in ["admin", "ctfd", "netdata"]
 		},
 	), restart_redis)
 

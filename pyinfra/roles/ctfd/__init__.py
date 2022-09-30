@@ -116,7 +116,7 @@ def apply():
 		user = "root",
 		group = "ctfd",
 		mode = "640",
-		# template args
+		# template data
 		ctfd_secret_key = KeySource.derive_key_b64(host, "ctfd-secret-key", 64),
 		ctfd_mariadb_pwd = KeySource.derive_key(host, "mariadb-ctfd-database-key", 32).hex(),
 		ctfd_redis_pwd = KeySource.derive_key(host, "redis-user-pwd-ctfd", 32).hex(),

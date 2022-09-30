@@ -5,6 +5,7 @@ from pyinfra.api import deploy
 from pyinfra.facts.rpm import RpmPackages
 from pyinfra.operations import files, server
 
+from roles.netdata.flagship import configure_flagship
 from util import Flag, KeySource, get_file_path, notify
 
 
@@ -12,6 +13,7 @@ from util import Flag, KeySource, get_file_path, notify
 def apply():
 	reload_systemd = Flag()
 	restart_netdata = Flag()
+
 
 	if "netdata-repo-edge" not in host.get_fact(RpmPackages).keys():
 		server.dnf.rpm(
@@ -26,6 +28,7 @@ def apply():
 		_serial = host.data.dnf_serial,
 	), reload_systemd)
 
+
 	notify(files.put(
 		name = "Disable Netdata Cloud integration",
 		src = get_file_path("cloud.conf"),
@@ -34,6 +37,7 @@ def apply():
 		group = "netdata",
 		mode = "640",
 	), restart_netdata)
+
 	notify(files.file(
 		name = "Disable Netdata analytics",
 		path = "/etc/netdata/.opt-out-from-anonymous-statistics",
@@ -42,6 +46,7 @@ def apply():
 		group = "netdata",
 		mode = "0640",
 	), restart_netdata)
+
 
 	notify(files.template(
 		name = "Install main Netdata config",
@@ -72,6 +77,11 @@ def apply():
 			if getattr(child.data, "netdata_parent", None) is False
 		},
 	), restart_netdata)
+
+
+	if host.data.primary_group == "flagship":
+		notify(configure_flagship(name="Install flagship-specific configuration"), restart_netdata)
+
 
 	server.systemd.service(
 		name = "Activate Netdata service",
