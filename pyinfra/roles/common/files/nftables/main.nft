@@ -32,9 +32,8 @@ table inet firewall {
 
 	# Base-chain for traffic meant for this host
 	chain input {
-		type filter hook input priority filter
 		# Drop unmatched traffic
-		policy drop
+		type filter hook input priority filter; policy drop;
 
 		ct state invalid drop comment "Drop invalid connections"
 		ct state { established, related } meta l4proto { tcp, udp } accept comment "Accept existing, established connections"
@@ -50,9 +49,7 @@ table inet firewall {
 
 	# Base-chain for traffic to be forwarded to another host
 	chain forward {
-		type filter hook forward priority filter
 		# Drop unmatched traffic
-		policy drop
+		type filter hook forward priority filter; policy drop;
 	}
-
 }
