@@ -22,6 +22,7 @@ table inet firewall {
 		iifname lo accept comment "Accept inbound traffic from loopback interface"
 
 		meta l4proto { icmp, icmpv6 } limit rate 10/second accept comment "Accept inbound ICMP traffic (ratelimited)"
+		meta l4proto { icmp, icmpv6 } drop comment "Drop excessive inbound ICMP traffic"
 
 		# allow accessing SSHd from anywhere
 		tcp dport ssh accept comment "Accept inbound SSH traffic"
@@ -35,8 +36,8 @@ table inet firewall {
 		# Drop unmatched traffic
 		policy drop
 
-		ct state { established, related } accept comment "Accept existing, established connections"
 		ct state invalid drop comment "Drop invalid connections"
+		ct state { established, related } meta l4proto { tcp, udp } accept comment "Accept existing, established connections"
 
 		# Machine-specific accept rules
 		jump input_machine
