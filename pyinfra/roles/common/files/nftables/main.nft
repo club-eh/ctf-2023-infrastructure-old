@@ -31,12 +31,20 @@ table inet firewall {
 		udp dport 51820 accept comment "Accept inbound Wireguard traffic"
 	}
 
+	# Base-chain for all traffic received by this host
+	chain prerouting {
+		# Accept unmatched traffic
+		type filter hook prerouting priority filter; policy accept;
+
+		# Drop invalid connections
+		ct state invalid drop comment "Drop invalid connections"
+	}
+
 	# Base-chain for traffic meant for this host
 	chain input {
 		# Drop unmatched traffic
 		type filter hook input priority filter; policy drop;
 
-		ct state invalid drop comment "Drop invalid connections"
 		ct state { established, related } meta l4proto { tcp, udp } accept comment "Accept existing, established connections"
 
 		# Machine-specific accept rules
