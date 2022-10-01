@@ -21,6 +21,7 @@ table inet firewall {
 	chain input_shared {
 		iifname lo accept comment "Accept inbound traffic from loopback interface"
 
+		# Rate-limit inbound ICMP traffic
 		meta l4proto { icmp, icmpv6 } limit rate 10/second accept comment "Accept inbound ICMP traffic (ratelimited)"
 		meta l4proto { icmp, icmpv6 } drop comment "Drop excessive inbound ICMP traffic"
 
@@ -51,5 +52,15 @@ table inet firewall {
 	chain forward {
 		# Drop unmatched traffic
 		type filter hook forward priority filter; policy drop;
+	}
+
+	# Base-chain for traffic originating from this host
+	chain output {
+		# Accept unmatched traffic
+		type filter hook output priority filter; policy accept;
+
+		# Rate-limit outbound ICMP traffic
+		meta l4proto { icmp, icmpv6 } limit rate 20/second accept comment "Accept outbound ICMP traffic (ratelimited)"
+		meta l4proto { icmp, icmpv6 } drop comment "Drop excessive outbound ICMP traffic"
 	}
 }
