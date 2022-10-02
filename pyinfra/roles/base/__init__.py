@@ -2,6 +2,7 @@
 
 from pyinfra import host
 from pyinfra.api import deploy
+from pyinfra.facts.server import Selinux
 from pyinfra.operations import server
 
 from util import get_file_path, get_secret_path
@@ -28,6 +29,19 @@ def apply():
 		user = "root",
 		group = "root",
 		mode = "0600",
+	)
+
+	# Disable SELinux enforcement
+	if host.get_fact(Selinux)["mode"] == "enabled":
+		server.shell(
+			name = "Disable SELinux enforcement (runtime)",
+			commands="setenforce 0",
+		)
+	server.files.line(
+		name = "Disable SELinux enforcement (permanent)",
+		path = "/etc/selinux/config",
+		line = "SELINUX=enforcing",
+		replace = "SELINUX=permissive",
 	)
 
 	# Set hostname and timezone, if specified
