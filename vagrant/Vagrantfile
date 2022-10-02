@@ -45,28 +45,4 @@ Vagrant.configure("2") do |config|
       machine.vm.network :private_network, ip: "192.168.61.#{10 + mid}"
     end
   end
-
-
-  # Use Ansible to semi-provision machines (with an auto-generated inventory file)
-  # Note that Vagrant runs Ansible against each machine independently
-  config.vm.provision :ansible do |ansible|
-    ansible.playbook = "../ansible/initial.yaml"
-    ansible.groups = {
-      "flagship" => ["ctf-flagship"],
-      "challenges" => challenge_machines
-    }
-    ansible.extra_vars = {
-      target_env: "local",
-      # prevent conflicts over shared package cache
-      dnf_throttle: 1
-    }
-
-    # workaround for https://github.com/hashicorp/vagrant/issues/12762
-    ansible.host_vars = {
-      "ctf-flagship" => { vagrant_workaround_static_ip: "192.168.61.10/24" },
-    }
-    (1..challenge_machine_num).each do |mid|
-      ansible.host_vars["ctf-challenges-#{mid}"] = { vagrant_workaround_static_ip: "192.168.61.#{10 + mid}/24" }
-    end
-  end
 end

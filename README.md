@@ -53,7 +53,7 @@ Bring up the virtual machines with Vagrant:
 
 ```bash
 cd vagrant/
-vagrant up --no-provision
+vagrant up
 ```
 
 Provision the machines with pyinfra:
