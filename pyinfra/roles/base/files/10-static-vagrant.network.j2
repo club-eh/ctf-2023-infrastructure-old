@@ -4,7 +4,8 @@
 Name=eth1
 
 [Network]
-Address={{ vagrant_static_ip }}/24
+Address={{ host.data.vagrant_static_ip }}/24
+# Gateway not set to avoid creating a default route (internet traffic needs to use the NAT interface)
 
 # Disable IPv6 (https://wiki.archlinux.org/title/IPv6#systemd-networkd_3)
 LinkLocalAddressing=no

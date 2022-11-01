@@ -6,6 +6,7 @@ from pyinfra.facts.systemd import SystemdStatus
 from pyinfra.operations import dnf, files, systemd
 
 from util import Flag, get_file_path, notify
+from util.paths import PathNotFound
 
 
 @deploy("Install + configure systemd-networkd")
@@ -48,16 +49,20 @@ def apply():
 		mode = "0644",
 	), restart_networkd)
 
-	if hasattr(host.data, "vagrant_static_ip"):
-		notify(files.template(
-			name = "Install Vagrant static IP network configuration",
-			src = get_file_path("10-vagrant-static.network.j2"),
-			dest = "/etc/systemd/network/10-vagrant-static.network",
-			user = "root",
-			group = "root",
-			mode = "0644",
-			vagrant_static_ip = host.data.vagrant_static_ip,
-		), restart_networkd)
+	for group_name in host.groups:
+		try:
+			template_file = get_file_path(f"10-static-{group_name}.network.j2")
+		except PathNotFound:
+			pass
+		else:
+			notify(files.template(
+				name = f"Install static IP network configuration for '{group_name}'",
+				src = template_file,
+				dest = "/etc/systemd/network/10-static.network",
+				user = "root",
+				group = "root",
+				mode = "0644",
+			), restart_networkd)
 
 
 	systemd.service(

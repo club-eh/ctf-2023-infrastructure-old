@@ -1,0 +1,13 @@
+# Static IP configuration for staging environments
+
+[Match]
+Name=eth0
+
+[Network]
+Address={{ host.data.staging_static_ip }}/24
+Gateway=10.7.8.1
+DNS=10.7.8.1
+
+# Disable IPv6 (https://wiki.archlinux.org/title/IPv6#systemd-networkd_3)
+LinkLocalAddressing=no
+IPv6AcceptRA=no
