@@ -26,3 +26,20 @@ module "dns" {
   ip_flagship   = "10.7.8.100"
   ip_challenges = { for i in range(1, local.num_challenge_machines + 1) : i => "10.7.8.${100 + i}" }
 }
+
+# Proxmox resources
+module "proxmox" {
+  source = "../modules/proxmox"
+
+  # Shared variables
+  secrets_dir = var.secrets_dir
+
+  # Proxmox API endpoint
+  api_url = "https://10.7.8.3:8006/api2/json"
+
+  # Proxmox target
+  pve_node = "athena"
+  pve_pool = "ctf-2023"
+
+  disk_size_os = "16G"
+}
