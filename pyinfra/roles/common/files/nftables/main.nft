@@ -26,7 +26,7 @@ table inet firewall {
 		meta l4proto { icmp, icmpv6 } drop comment "Drop excessive inbound ICMP traffic"
 
 		# allow accessing SSHd from anywhere
-		tcp dport ssh accept comment "Accept inbound SSH traffic"
+		tcp dport ssh limit rate 50/second accept comment "Accept inbound SSH traffic"
 		# allow accessing Wireguard from anywhere
 		udp dport 51820 accept comment "Accept inbound Wireguard traffic"
 	}
