@@ -1,6 +1,19 @@
 # Infrastructure - club.eh CTF 2023
 
-This is the infrastructure repo for the 2023 club.eh CTF.
+This is our (old) infrastructure repo for the 2023 club.eh CTF.
+
+See our [v2 repo](https://github.com/club-eh/ctf-2023-infrastructure) for the infrastructure we actually used during Hacker's Odyssey CTF.
+
+
+## Preface
+
+This repository has two branches: `pyinfra` (this one) and `ansible`.
+
+We started writing our IaC using [Ansible](https://ansible.com/), but eventually looked for an alternative that "stayed out of the way" a bit more.  
+[Pyinfra](https://pyinfra.com/) seemed to fit the bill (although it has its own issues), so I rewrote everything in Pyinfra.  
+I also wrote a few hacky patches that I didn't bother to upstream, which can be found [here](https://git.sb418.net/sudoBash418/pyinfra).
+
+After some outside developments, including a switch to Microsoft Azure, we decided to abandon this repo entirely in favour of a Kubernetes-based infrastructure.
 
 
 ## Environments
