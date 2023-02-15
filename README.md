@@ -1,4 +1,4 @@
-# Infrastructure - club.eh CTF 2023
+# club.eh CTF 2023 - Infrastructure [outdated]
 
 This is our (old) infrastructure repo for the 2023 club.eh CTF.
 
