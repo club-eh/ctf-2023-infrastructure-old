@@ -1,8 +1,8 @@
-# club.eh CTF 2023 - Infrastructure [outdated]
+# club.eh 2023 CTF - Infrastructure [outdated]
 
-This is our (old) infrastructure repo for the 2023 club.eh CTF.
+This is our (old) infrastructure repo for club.eh's 2023 CTF: Hacker's Odyssey.
 
-See our [v2 repo](https://github.com/club-eh/ctf-2023-infrastructure) for the infrastructure we actually used during Hacker's Odyssey CTF.
+See our [v2 repo](https://github.com/club-eh/ctf-2023-infrastructure) for the infrastructure we actually used during the event.
 
 
 ## Preface
