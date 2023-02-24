@@ -93,3 +93,9 @@ The machines can be suspended, shut down, etc. via Vagrant's CLI (see `vagrant -
 All data is ephemeral in the local environment; running `vagrant destroy` will wipe the machines and all state they contain.
 
 To redeploy from scratch: tear down the environment with `vagrant destroy`, and then follow the [deployment and provisioning](#deployment-and-provisioning) steps.
+
+
+## License
+
+The contents of this repository are provided under the terms of the MIT license.  
+See [LICENSE.txt](LICENSE.txt) for details.
